@@ -31,20 +31,10 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
-//import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-//import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.util.Range;
-
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -66,14 +56,11 @@ public class FreightFrenzyDriverControlled extends OpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotorEx spinner;
-    private Servo wobbleGoalTres;
-    private Servo wobbleGoalUno;
+    private DcMotorEx spinner = null;
     private DcMotorEx frontleft = null;
     private DcMotorEx frontright = null;
     private DcMotorEx backleft = null;
     private DcMotorEx backright = null;
-    private DcMotorEx outake2 = null;
     private DcMotorEx intake = null;
     private DcMotorEx arm = null;
     //private static final double velocity = 2000;
@@ -88,21 +75,14 @@ public class FreightFrenzyDriverControlled extends OpMode
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
-        frontleft  = hardwareMap.get(DcMotorEx.class, "frontleft");
-        frontright = hardwareMap.get(DcMotorEx.class, "frontright");
-        backleft  = hardwareMap.get(DcMotorEx.class, "backleft");
-        backright = hardwareMap.get(DcMotorEx.class, "backright");
-        outake2 = hardwareMap.get(DcMotorEx.class, "outake2");
-        //too1 = hardwareMap.get(DcMotor.class, "too1");
+        frontleft  = hardwareMap.get(DcMotorEx.class, "leftFront");
+        frontright = hardwareMap.get(DcMotorEx.class, "rightFront");
+        backleft  = hardwareMap.get(DcMotorEx.class, "leftRear");
+        backright = hardwareMap.get(DcMotorEx.class, "rightRear");
         intake = hardwareMap.get(DcMotorEx.class, "intake");
-        wobbleGoalTres = hardwareMap.get(Servo.class, "wobbleGoalTres");
         arm = hardwareMap.get(DcMotorEx.class, "arm");
         spinner = hardwareMap.get(DcMotorEx.class, "spinner");
-        wobbleGoalUno = hardwareMap.get(Servo.class, "wobbleGoalUno");
 
-        //outake1.setDirection(DcMotor.Direction.REVERSE);
-        outake2.setDirection(DcMotorEx.Direction.FORWARD);
-        //too1.setDirection(DcMotor.Direction.REVERSE);
         intake.setDirection(DcMotorEx.Direction.REVERSE);
         arm.setDirection(DcMotorEx.Direction.FORWARD);
 
@@ -116,15 +96,10 @@ public class FreightFrenzyDriverControlled extends OpMode
 //        backleft.setDirection(DcMotor.Direction.REVERSE);
 //        backright.setDirection(DcMotor.Direction.FORWARD);
 
-        outake2.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(50, 0, 2, 14));
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
 
-        outake2.setVelocity(0);
-
-        wobbleGoalTres.setPosition(0.9);
-        wobbleGoalUno.setPosition(0.2);
 
     }
 
@@ -149,42 +124,15 @@ public class FreightFrenzyDriverControlled extends OpMode
     @Override
     public void loop() {
         // Setup a variable for each drive wheel to save power level for telemetry
-//        outake2.setMotorEnable();
-//        outake2.setVelocity(velocity);
         //.setPower(0.63569);
 
         double in  =  gamepad2.left_stick_y;
         double o = gamepad2.right_stick_y;
         double sped = gamepad2.right_stick_x;
 
-        //too1.setPower(o/2);
         intake.setPower(in);
-        spinner.setPower(in);
+        spinner.setPower(o);
         arm.setPower(sped/2);
-
-        if(gamepad2.a) {
-            wobbleGoalTres.setPosition(0.65);
-
-        }
-        if(gamepad2.b) {
-            wobbleGoalTres.setPosition(0.9);
-        }
-
-        if(gamepad2.x) {
-            outake2.setVelocity(1240);
-        }
-
-        if(gamepad2.y) {
-            outake2.setVelocity(0);
-        }
-
-        if(gamepad2.right_bumper) {
-            wobbleGoalUno.setPosition(0.2);
-        }
-
-        if(gamepad2.left_bumper) {
-            wobbleGoalUno.setPosition(0.8);
-        }
 
         float y;
         float x;
@@ -202,9 +150,6 @@ public class FreightFrenzyDriverControlled extends OpMode
 
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Velocity", ": " + outake2.getVelocity());
-        telemetry.addData("Power", ": " + outake2.getPower());
-        telemetry.addData("PIDFCoeffs", ":" + outake2.getPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER));
         telemetry.update();
 
     }
