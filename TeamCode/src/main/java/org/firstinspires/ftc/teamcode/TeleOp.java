@@ -63,7 +63,7 @@ public class TeleOp extends LinearOpMode {
                     )
             );
             //intake
-            intake.setPower(0.5*gamepad2.left_stick_y+0.5);
+            intake.setPower(gamepad2.left_stick_y);
             //arm
             armMotor.setPower(gamepad2.right_stick_y*0.8);
             //carousel spinner
