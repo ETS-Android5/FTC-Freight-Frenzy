@@ -19,7 +19,7 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_VEL;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.RUN_USING_ENCODER;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TeleOp Gay", group="Iterative Opmode")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TeleOp G", group="Iterative Opmode")
 public class TeleOp extends LinearOpMode {
 
     private FtcDashboard dashboard = FtcDashboard.getInstance();
