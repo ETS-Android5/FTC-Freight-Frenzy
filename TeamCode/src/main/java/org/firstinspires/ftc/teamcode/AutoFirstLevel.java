@@ -23,7 +23,7 @@ public class AutoFirstLevel extends LinearOpMode{
     DcMotorEx frontright;
     DcMotorEx backleft;
     DcMotorEx backright;
-    DcMotorEx outake2;
+    DcMotor carouselSpinner, armMotor;
     Double width = 18.0; //inches
     Integer cpr = 28; //counts per rotation
     Integer gearratio = 20;
@@ -42,16 +42,26 @@ public class AutoFirstLevel extends LinearOpMode{
         frontright = hardwareMap.get(DcMotorEx.class, "rightFront");
         backleft  = hardwareMap.get(DcMotorEx.class, "leftRear");
         backright = hardwareMap.get(DcMotorEx.class, "rightRear");
-
+        carouselSpinner=hardwareMap.get(DcMotor.class, "carouselSpinner");
+        armMotor=hardwareMap.get(DcMotor.class, "armMotor");
 
         frontright.setDirection(DcMotorSimple.Direction.REVERSE);
         backright.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        moveToPosition(3, 0.3);
+        turnWithGyro(90, -0.3);
+        moveToPosition(16, 0.4);
+        carouselSpinner.setPower(0.4);
+        sleep(2000);
+        carouselSpinner.setPower(0);
+        moveToPosition(-48, 0.5);
         sleep(1000);
-        strafeToPosition(24, 0.4);
-        //place arm down
-
+        turnWithGyro(90, 0.4);
+        moveToPosition(24, 0.3);
+        //move arm down
+        armMotor.setPower(0.6);
+        sleep(750);
+        armMotor.setPower(0);
+        turnWithGyro(135, 0.4);
+        moveToPosition(40, 0.5);
         waitForStartify();
 //
 
