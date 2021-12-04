@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.profile.MotionState;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -25,11 +26,18 @@ public class TeleOp extends LinearOpMode {
 
     private SampleMecanumDrive drive;
 
+    public DcMotor carouselSpinner;
+
+    public DcMotor armMotor;
+
     public CRServo intake;
 
     @Override
     public void runOpMode() throws InterruptedException {
         intake=hardwareMap.get(CRServo.class, "intake");
+        carouselSpinner=hardwareMap.get(DcMotor.class, "carouselSpinner");
+        armMotor=hardwareMap.get(DcMotor.class, "armMotor");
+
         if (RUN_USING_ENCODER) {
 //            RobotLog.setGlobalErrorMsg("Feedforward constants usually don't need to be tuned " +
 //                    "when using the built-in drive motor velocity PID.");
@@ -38,8 +46,6 @@ public class TeleOp extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
         drive = new SampleMecanumDrive(hardwareMap);
-
-        intake.setPower(0.5*gamepad2.left_stick_y+0.5);
 
         NanoClock clock = NanoClock.system();
 
@@ -56,6 +62,13 @@ public class TeleOp extends LinearOpMode {
                             -gamepad1.right_stick_x
                     )
             );
+            intake.setPower(0.5*gamepad2.left_stick_y+0.5);
+
+            armMotor.setPower(gamepad2.right_stick_y*0.8);
+
+            if(gamepad2.dpad_right) carouselSpinner.setPower(1.00);
+            if(gamepad2.dpad_left) carouselSpinner.setPower(-1.00);
+            if(gamepad2.dpad_up) carouselSpinner.setPower(0.00);
         }
     }
 }
