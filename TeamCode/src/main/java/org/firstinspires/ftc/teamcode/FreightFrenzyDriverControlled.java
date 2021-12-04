@@ -79,12 +79,7 @@ public class FreightFrenzyDriverControlled extends OpMode
         frontright = hardwareMap.get(DcMotorEx.class, "rightFront");
         backleft  = hardwareMap.get(DcMotorEx.class, "leftRear");
         backright = hardwareMap.get(DcMotorEx.class, "rightRear");
-        intake = hardwareMap.get(DcMotorEx.class, "intake");
-        arm = hardwareMap.get(DcMotorEx.class, "arm");
-        spinner = hardwareMap.get(DcMotorEx.class, "spinner");
 
-        intake.setDirection(DcMotorEx.Direction.REVERSE);
-        arm.setDirection(DcMotorEx.Direction.FORWARD);
 
         frontleft.setDirection(DcMotorEx.Direction.REVERSE);
         frontright.setDirection(DcMotorEx.Direction.FORWARD);
@@ -129,10 +124,6 @@ public class FreightFrenzyDriverControlled extends OpMode
         double in  =  gamepad2.left_stick_y;
         double o = gamepad2.right_stick_y;
         double sped = gamepad2.right_stick_x;
-
-        intake.setPower(in);
-        spinner.setPower(o);
-        arm.setPower(sped/2);
 
         float y;
         float x;

@@ -8,6 +8,12 @@ configurations {
     doc { transitive false }
 }
 
+configurations.all {
+    resolutionStrategy {
+        force 'androidx.core:core-ktx:1.6.0'
+    }
+}
+
 buildscript {
     repositories {
         mavenCentral()
@@ -22,6 +28,11 @@ buildscript {
 // This is now required because aapt2 has to be downloaded from the
 // google() repository beginning with version 3.2 of the Android Gradle Plugin
 allprojects {
+    allprojects {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+        }
+    }
     repositories {
         mavenCentral()
         google()
