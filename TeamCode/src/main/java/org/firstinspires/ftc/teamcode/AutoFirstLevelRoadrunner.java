@@ -43,32 +43,9 @@ public class AutoFirstLevelRoadrunner extends LinearOpMode {
 
         drive = new SampleMecanumDrive(hardwareMap);
 
-        Trajectory t1=drive.trajectoryBuilder(startPose).forward(16).build();
-        Trajectory t2=drive.trajectoryBuilder(t1.end()).back(-48).build();
+        Trajectory t1=drive.trajectoryBuilder(startPose).back(16).build();
+        Trajectory t2=drive.trajectoryBuilder(t1.end()).forward(48).build();
         Trajectory t3=drive.trajectoryBuilder(t2.end()).splineToLinearHeading(new Pose2d(24, 0, Math.toRadians(90)), 0).build();
         Trajectory t4=drive.trajectoryBuilder(t3.end()).forward(40).build();
-
-        waitForStart();
-        if((opModeIsActive() && !isStopRequested())) {
-            drive.turn(Math.toRadians(-90));
-            drive.followTrajectory(t1);
-            carouselSpinner.setPower(0.4);
-            sleep(2000);
-            carouselSpinner.setPower(0);
-            drive.followTrajectory(t2);
-            sleep(1000);
-            drive.turn(Math.toRadians(90));
-            drive.followTrajectory(t3);
-            //move arm down
-            armMotor.setPower(0.6);
-            sleep(750);
-            intake.setPower(0.0);
-            sleep(750);
-            armMotor.setPower(0.3);
-            sleep(750);
-            armMotor.setPower(0.00);
-            drive.turn(Math.toRadians(135));
-            drive.followTrajectory(t4);
-        }
     }
 }

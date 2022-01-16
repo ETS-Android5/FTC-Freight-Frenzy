@@ -10,6 +10,7 @@ import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -32,11 +33,18 @@ public class TeleOp extends LinearOpMode {
 
     public DcMotor intake;
 
+    Servo box;
+
+    private double collectionBoxPosition=0.0;
+    private double carryingBoxPosition=0.2;
+    private double droppingBoxPosition=0.6;
+
     @Override
     public void runOpMode() throws InterruptedException {
         intake=hardwareMap.get(DcMotor.class, "intake");
         carouselSpinner=hardwareMap.get(DcMotor.class, "carouselSpinner");
         armMotor=hardwareMap.get(DcMotor.class, "armMotor");
+        box=hardwareMap.get(Servo.class, "boxServo");
 
         if (RUN_USING_ENCODER) {
 //            RobotLog.setGlobalErrorMsg("Feedforward constants usually don't need to be tuned " +
@@ -68,7 +76,12 @@ public class TeleOp extends LinearOpMode {
             if(gamepad2.dpad_right) carouselSpinner.setPower(0.60);
             if(gamepad2.dpad_left) carouselSpinner.setPower(-0.60);
             if(gamepad2.dpad_up) carouselSpinner.setPower(0.00);
+            //intake
             intake.setPower(-gamepad2.left_stick_y);
+            //box servo
+            if(gamepad2.a) box.setPosition(collectionBoxPosition);
+            if(gamepad2.b) box.setPosition(carryingBoxPosition);
+            if(gamepad2.x) box.setPosition(droppingBoxPosition);
         }
     }
 }
