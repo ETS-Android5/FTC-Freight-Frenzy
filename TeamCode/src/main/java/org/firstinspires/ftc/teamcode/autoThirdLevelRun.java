@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-public class autoFirstLevelRun extends LinearOpMode {
+public class autoThirdLevelRun extends LinearOpMode {
     private FtcDashboard dashboard = FtcDashboard.getInstance();
 
     private SampleMecanumDrive drive;
