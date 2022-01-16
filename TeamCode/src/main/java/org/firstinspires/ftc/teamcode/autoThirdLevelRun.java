@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
@@ -15,10 +16,10 @@ public class autoThirdLevelRun extends LinearOpMode {
 
     private SampleMecanumDrive drive;
 
-    DcMotorEx frontleft;
-    DcMotorEx frontright;
-    DcMotorEx backleft;
-    DcMotorEx backright;
+    DcMotorEx leftFront;
+    DcMotorEx rightFront;
+    DcMotorEx leftRear;
+    DcMotorEx rightRear;
     DcMotor carouselSpinner, armMotor;
     CRServo intake;
 
@@ -26,10 +27,10 @@ public class autoThirdLevelRun extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        frontleft = hardwareMap.get(DcMotorEx.class, "leftFront");
-        frontright = hardwareMap.get(DcMotorEx.class, "rightFront");
-        backleft = hardwareMap.get(DcMotorEx.class, "leftRear");
-        backright = hardwareMap.get(DcMotorEx.class, "rightRear");
+        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
+        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
+        rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
         carouselSpinner = hardwareMap.get(DcMotor.class, "carouselSpinner");
         armMotor = hardwareMap.get(DcMotor.class, "armMotor");
         intake = hardwareMap.get(CRServo.class, "intake");
@@ -38,7 +39,9 @@ public class autoThirdLevelRun extends LinearOpMode {
 
         drive = new SampleMecanumDrive(hardwareMap);
 
-
+        rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightRear.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
         waitForStart();
         if ((opModeIsActive() && !isStopRequested())) {
 
