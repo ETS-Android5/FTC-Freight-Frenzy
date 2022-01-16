@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -20,12 +21,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
+@TeleOp(name = "AutoFirstLevelRun", group = "teleop")
 public class autoFirstLevelRun extends LinearOpMode {
     private FtcDashboard dashboard = FtcDashboard.getInstance();
 
     private SampleMecanumDrive drive ;
-    private double collectionBoxPosition=0.0;
-    private double carryingBoxPosition=0.2;
+    private double collectionBoxPosition=0.1;
+    private double carryingBoxPosition=0.25;
     private double droppingBoxPosition=0.6;
     DcMotorEx leftFront;
     DcMotorEx rightFront;
@@ -78,6 +80,7 @@ public class autoFirstLevelRun extends LinearOpMode {
 
         waitForStart();
         if ((opModeIsActive() && !isStopRequested())) {
+            /*
             drive.turn(Math.toRadians(-90));
             drive.followTrajectory(t1);
             carouselSpinner.setPower(0.2);
@@ -93,8 +96,8 @@ public class autoFirstLevelRun extends LinearOpMode {
             drive.followTrajectory(t3);
             drive.turn(Math.toRadians(90));
             drive.followTrajectory(t4);
+            */
 
-            //
             turnWithGyro(90, 0.3);
             moveToPosition(16, 0.3);
             carouselSpinner.setPower(0.2);
@@ -104,7 +107,7 @@ public class autoFirstLevelRun extends LinearOpMode {
             strafeToPosition(24, 0.3);
             turnWithGyro(90, -0.3);
             //move arm down
-            armMotor.setPower(0.4);
+            armMotor.setPower(-0.4);
             sleep(1000);
             armMotor.setPower(0.0);
             box.setPosition(droppingBoxPosition);
@@ -113,7 +116,7 @@ public class autoFirstLevelRun extends LinearOpMode {
             moveToPosition(36, 0.3);
             turnWithGyro(90, 0.3);
             moveToPosition(50, 0.3);
-            //
+
         }
     }
     public void moveToPosition(double inches, double speed){

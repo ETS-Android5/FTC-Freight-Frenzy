@@ -35,8 +35,8 @@ public class TeleOp extends LinearOpMode {
 
     Servo box;
 
-    private double collectionBoxPosition=0.0;
-    private double carryingBoxPosition=0.2;
+    private double collectionBoxPosition=0.1;
+    private double carryingBoxPosition=0.25;
     private double droppingBoxPosition=0.6;
 
     @Override
