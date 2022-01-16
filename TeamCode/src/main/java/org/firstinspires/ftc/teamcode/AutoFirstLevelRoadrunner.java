@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -12,7 +13,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-@TeleOp(name="FirstLevelRoadrunner", group="Auto")
+@TeleOp(name="AutoRoadrunner", group="TeleopRobot")
 public class AutoFirstLevelRoadrunner extends LinearOpMode {
 
     private FtcDashboard dashboard = FtcDashboard.getInstance();
@@ -26,7 +27,7 @@ public class AutoFirstLevelRoadrunner extends LinearOpMode {
     DcMotor carouselSpinner, armMotor;
     CRServo intake;
 
-    Pose2d startPose=new Pose2d(0, 0, 0);
+    Pose2d startPose=new Pose2d();
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -42,25 +43,32 @@ public class AutoFirstLevelRoadrunner extends LinearOpMode {
 
         drive = new SampleMecanumDrive(hardwareMap);
 
+        Trajectory t1=drive.trajectoryBuilder(startPose).forward(16).build();
+        Trajectory t2=drive.trajectoryBuilder(t1.end()).back(-48).build();
+        Trajectory t3=drive.trajectoryBuilder(t2.end()).splineToLinearHeading(new Pose2d(24, 0, Math.toRadians(90)), 0).build();
+        Trajectory t4=drive.trajectoryBuilder(t3.end()).forward(40).build();
+
         waitForStart();
-        if(opModeIsActive()) {
+        if((opModeIsActive() && !isStopRequested())) {
             drive.turn(Math.toRadians(-90));
-            drive.trajectoryBuilder(startPose).forward(16);
+            drive.followTrajectory(t1);
             carouselSpinner.setPower(0.4);
             sleep(2000);
             carouselSpinner.setPower(0);
-            drive.trajectoryBuilder(startPose).back(-48);
+            drive.followTrajectory(t2);
             sleep(1000);
             drive.turn(Math.toRadians(90));
-            drive.trajectoryBuilder(startPose).splineToLinearHeading(new Pose2d(24, 0, Math.toRadians(90)), 0);
+            drive.followTrajectory(t3);
             //move arm down
             armMotor.setPower(0.6);
             sleep(750);
             intake.setPower(0.0);
             sleep(750);
-            armMotor.setPower(0);
+            armMotor.setPower(0.3);
+            sleep(750);
+            armMotor.setPower(0.00);
             drive.turn(Math.toRadians(135));
-            drive.trajectoryBuilder(startPose).forward(40);
+            drive.followTrajectory(t4);
         }
     }
 }

@@ -30,11 +30,11 @@ public class TeleOp extends LinearOpMode {
 
     public DcMotor armMotor;
 
-    public CRServo intake;
+    public DcMotor intake;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        intake=hardwareMap.get(CRServo.class, "intake");
+        intake=hardwareMap.get(DcMotor.class, "intake");
         carouselSpinner=hardwareMap.get(DcMotor.class, "carouselSpinner");
         armMotor=hardwareMap.get(DcMotor.class, "armMotor");
 
@@ -62,14 +62,13 @@ public class TeleOp extends LinearOpMode {
                             -gamepad1.right_stick_x
                     )
             );
-            //intake
-            intake.setPower(gamepad2.left_stick_y);
             //arm
-            armMotor.setPower(gamepad2.right_stick_y*0.8);
+            armMotor.setPower(-gamepad2.right_stick_y);
             //carousel spinner
-            if(gamepad2.dpad_right) carouselSpinner.setPower(1.00);
-            if(gamepad2.dpad_left) carouselSpinner.setPower(-1.00);
+            if(gamepad2.dpad_right) carouselSpinner.setPower(0.60);
+            if(gamepad2.dpad_left) carouselSpinner.setPower(-0.60);
             if(gamepad2.dpad_up) carouselSpinner.setPower(0.00);
+            intake.setPower(-gamepad2.left_stick_y);
         }
     }
 }
