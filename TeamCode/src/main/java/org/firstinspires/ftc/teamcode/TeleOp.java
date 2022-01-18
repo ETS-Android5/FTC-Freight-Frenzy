@@ -44,7 +44,7 @@ public class TeleOp extends LinearOpMode {
         intake=hardwareMap.get(DcMotor.class, "intake");
         carouselSpinner=hardwareMap.get(DcMotor.class, "carouselSpinner");
         armMotor=hardwareMap.get(DcMotor.class, "armMotor");
-        box=hardwareMap.get(Servo.class, "boxServo");
+        box=hardwareMap.get(Servo.class, "box");
 
         if (RUN_USING_ENCODER) {
 //            RobotLog.setGlobalErrorMsg("Feedforward constants usually don't need to be tuned " +
