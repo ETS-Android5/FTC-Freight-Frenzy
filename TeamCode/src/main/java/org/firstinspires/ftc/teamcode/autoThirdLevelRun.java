@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -21,7 +22,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-@TeleOp(name = "AutoThirdLevelRun", group = "teleop")
+@Autonomous(name = "AutoThirdLevelRun", group = "teleop")
 public class autoThirdLevelRun extends LinearOpMode {
     private FtcDashboard dashboard = FtcDashboard.getInstance();
 
@@ -61,24 +62,22 @@ public class autoThirdLevelRun extends LinearOpMode {
         armMotor = hardwareMap.get(DcMotor.class, "armMotor");
         intake = hardwareMap.get(DcMotor.class, "intake");
         box = hardwareMap.get(Servo.class, "box");
+
         initGyro();
 
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
         drive = new SampleMecanumDrive(hardwareMap);
 
-        rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightRear.setDirection(DcMotorSimple.Direction.FORWARD);
-        leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
-
         Trajectory t1=drive.trajectoryBuilder(new Pose2d(0,0,Math.toRadians(-90))).back(16).build();
-        Trajectory t2=drive.trajectoryBuilder(t1.end()).forward(46).strafeLeft(24).build();
-        Trajectory t3=drive.trajectoryBuilder(drive.getPoseEstimate()).forward(36).build();
-        Trajectory t4 = drive.trajectoryBuilder(drive.getPoseEstimate()).forward(50).build();
+        Trajectory t2=drive.trajectoryBuilder(t1.end()).forward(46).build();
+        Trajectory t5=drive.trajectoryBuilder(t2.end()).strafeLeft(24).build();
+        Trajectory t3=drive.trajectoryBuilder(t5.end()).forward(36).build();
+        Trajectory t4 = drive.trajectoryBuilder(t3.end()).forward(50).build();
 
         box.setPosition(carryingBoxPosition);
 
-        waitForStart();
+        waitForStartify();
         if ((opModeIsActive() && !isStopRequested())) {
             /*
             drive.turn(Math.toRadians(-90));
@@ -87,10 +86,11 @@ public class autoThirdLevelRun extends LinearOpMode {
             sleep(4000);
             carouselSpinner.setPower(0);
             drive.followTrajectory(t2);
+            drive.followTrajectory(t5);
             drive.turn(Math.toRadians(-90));
             //move arm down
             armMotor.setPower(0.4);
-            sleep(1000);
+            sleep(2000);
             armMotor.setPower(0.0);
             box.setPosition(droppingBoxPosition);
             drive.followTrajectory(t3);
@@ -99,7 +99,7 @@ public class autoThirdLevelRun extends LinearOpMode {
             */
 
             turnWithGyro(90, 0.3);
-            moveToPosition(16, 0.3);
+            moveToPosition(16, -0.3);
             carouselSpinner.setPower(0.2);
             sleep(4000);
             carouselSpinner.setPower(0);
@@ -107,7 +107,7 @@ public class autoThirdLevelRun extends LinearOpMode {
             strafeToPosition(24, 0.3);
             turnWithGyro(90, -0.3);
             //move arm down
-            armMotor.setPower(-0.4);
+            armMotor.setPower(0.4);
             sleep(2000);
             armMotor.setPower(0.0);
             box.setPosition(droppingBoxPosition);
@@ -201,8 +201,9 @@ public class autoThirdLevelRun extends LinearOpMode {
                 yaw = -angles.firstAngle;
                 telemetry.addData("Position", yaw);
                 telemetry.addData("first before", first);
-                telemetry.addData("first after", convertify(first));
+                telemetry.addData("first after a", convertify(first));
                 telemetry.update();
+                if(degrees-yaw<10) return;
             }
         }else{
             while (!((firsta < yaw && yaw < 180) || (-180 < yaw && yaw < firstb)) && opModeIsActive()) {//within range?
@@ -211,14 +212,15 @@ public class autoThirdLevelRun extends LinearOpMode {
                 yaw = -angles.firstAngle;
                 telemetry.addData("Position", yaw);
                 telemetry.addData("first before", first);
-                telemetry.addData("first after", convertify(first));
+                telemetry.addData("first after b", convertify(first));
                 telemetry.update();
+                if(degrees-yaw<10) return;
             }
         }
         Double seconda = convertify(second - 5);//175
         Double secondb = convertify(second + 5);//-175
         //
-        turnWithEncoder(speedDirection / 3);
+        turnWithEncoder(speedDirection*3/4);
         //
         if (Math.abs(seconda - secondb) < 11) {
             while (!(seconda < yaw && yaw < secondb) && opModeIsActive()) {//within range?
@@ -227,8 +229,9 @@ public class autoThirdLevelRun extends LinearOpMode {
                 yaw = -angles.firstAngle;
                 telemetry.addData("Position", yaw);
                 telemetry.addData("second before", second);
-                telemetry.addData("second after", convertify(second));
+                telemetry.addData("second after c", convertify(second));
                 telemetry.update();
+                if(degrees-yaw<10) return;
             }
             while (!((seconda < yaw && yaw < 180) || (-180 < yaw && yaw < secondb)) && opModeIsActive()) {//within range?
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -236,8 +239,9 @@ public class autoThirdLevelRun extends LinearOpMode {
                 yaw = -angles.firstAngle;
                 telemetry.addData("Position", yaw);
                 telemetry.addData("second before", second);
-                telemetry.addData("second after", convertify(second));
+                telemetry.addData("second after d", convertify(second));
                 telemetry.update();
+                if(degrees-yaw<10) return;
             }
             leftFront.setPower(0);
             rightFront.setPower(0);

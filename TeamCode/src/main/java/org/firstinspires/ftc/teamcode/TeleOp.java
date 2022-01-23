@@ -43,7 +43,10 @@ public class TeleOp extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         intake=hardwareMap.get(DcMotor.class, "intake");
         carouselSpinner=hardwareMap.get(DcMotor.class, "carouselSpinner");
+
         armMotor=hardwareMap.get(DcMotor.class, "armMotor");
+        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         box=hardwareMap.get(Servo.class, "box");
 
         if (RUN_USING_ENCODER) {
@@ -71,7 +74,7 @@ public class TeleOp extends LinearOpMode {
                     )
             );
             //arm
-            armMotor.setPower(-gamepad2.right_stick_y);
+            armMotor.setPower(-gamepad2.right_stick_y*2/3);
             //carousel spinner
             if(gamepad2.dpad_right) carouselSpinner.setPower(0.60);
             if(gamepad2.dpad_left) carouselSpinner.setPower(-0.60);
