@@ -22,7 +22,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-@Autonomous(name = "AutoFirstLevelRun", group = "teleop")
+@Autonomous(name = "AutoSecondLevelRun", group = "teleop")
 public class autoFirstLevelRun extends LinearOpMode {
     private FtcDashboard dashboard = FtcDashboard.getInstance();
 
@@ -35,6 +35,7 @@ public class autoFirstLevelRun extends LinearOpMode {
     DcMotorEx leftRear;
     DcMotorEx rightRear;
     DcMotor carouselSpinner, armMotor, intake;
+    Servo box;
 
     Double width = 18.0; //inches
     Integer cpr = 28; //counts per rotation
@@ -49,8 +50,6 @@ public class autoFirstLevelRun extends LinearOpMode {
     Orientation angles;
     Acceleration gravity;
 
-    Servo box;
-
     Pose2d startPose=new Pose2d();
 
     @Override
@@ -60,7 +59,10 @@ public class autoFirstLevelRun extends LinearOpMode {
         leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
         rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
         carouselSpinner = hardwareMap.get(DcMotor.class, "carouselSpinner");
-        armMotor = hardwareMap.get(DcMotor.class, "armMotor");
+
+        armMotor=hardwareMap.get(DcMotor.class, "armMotor");
+        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         intake = hardwareMap.get(DcMotor.class, "intake");
         box = hardwareMap.get(Servo.class, "box");
 
@@ -70,35 +72,45 @@ public class autoFirstLevelRun extends LinearOpMode {
 
         drive = new SampleMecanumDrive(hardwareMap);
 
-        Trajectory t1=drive.trajectoryBuilder(new Pose2d(0,0,Math.toRadians(-90))).back(16).build();
-        Trajectory t2=drive.trajectoryBuilder(t1.end()).forward(46).build();
-        Trajectory t5=drive.trajectoryBuilder(t2.end()).strafeLeft(24).build();
-        Trajectory t3=drive.trajectoryBuilder(t5.end()).forward(36).build();
-        Trajectory t4 = drive.trajectoryBuilder(t3.end()).forward(50).build();
+        Trajectory t1=drive.trajectoryBuilder(new Pose2d(0,0,Math.toRadians(-103))).back(41).build();
+        Trajectory t2=drive.trajectoryBuilder(t1.end()).forward(26.5).build();
+        Trajectory t7=drive.trajectoryBuilder(t1.end()).forward(26).build();
+        Trajectory t5=drive.trajectoryBuilder(t2.end()).strafeLeft(26).build();
+        Trajectory t3=drive.trajectoryBuilder(t5.end()).strafeRight(39).build();
+        Trajectory t6=drive.trajectoryBuilder(t3.end()).forward(82).build();
+        Trajectory t4 = drive.trajectoryBuilder(t6.end()).back(82).build();
 
         box.setPosition(carryingBoxPosition);
 
         waitForStart();
         if ((opModeIsActive() && !isStopRequested())) {
-            /*
-            drive.turn(Math.toRadians(-90));
+            drive.turn(Math.toRadians(-100));
             drive.followTrajectory(t1);
-            carouselSpinner.setPower(0.2);
-            sleep(4000);
+            carouselSpinner.setPower(0.6);
+            sleep(2000);
             carouselSpinner.setPower(0);
             drive.followTrajectory(t2);
-            drive.turn(Math.toRadians(-90));
-            //move arm down
-            armMotor.setPower(0.4);
-            sleep(1000);
+            drive.followTrajectory(t5);
+            drive.turn(Math.toRadians(-180 ));
+            //move arm up
+            armMotor.setPower(0.8);
+            sleep(1300);
             armMotor.setPower(0.0);
-            box.setPosition(droppingBoxPosition);
-            drive.followTrajectory(t3);
-            drive.turn(Math.toRadians(90));
-            drive.followTrajectory(t4);
-            */
 
-            turnWithGyro(90, 0.3);
+            box.setPosition(droppingBoxPosition);
+            sleep(500);
+            drive.turn(Math.toRadians(-200));
+            box.setPosition(carryingBoxPosition);
+            armMotor.setPower(-0.8);
+            drive.followTrajectory(t3);
+            armMotor.setPower(0.00);
+            box.setPosition(collectionBoxPosition);
+            intake.setPower(1.00);
+            drive.followTrajectory(t6);
+//
+//            drive.followTrajectory(t4);
+
+            /*turnWithGyro(90, 0.3);
             moveToPosition(16, 0.3);
             carouselSpinner.setPower(0.2);
             sleep(4000);
@@ -108,14 +120,14 @@ public class autoFirstLevelRun extends LinearOpMode {
             turnWithGyro(90, -0.3);
             //move arm down
             armMotor.setPower(0.4);
-            sleep(1000);
+            sleep(1500);
             armMotor.setPower(0.0);
             box.setPosition(droppingBoxPosition);
             sleep(500);
             box.setPosition(collectionBoxPosition);
             moveToPosition(36, 0.3);
             turnWithGyro(90, 0.3);
-            moveToPosition(50, 0.3);
+            moveToPosition(50, 0.3);*/
 
         }
     }

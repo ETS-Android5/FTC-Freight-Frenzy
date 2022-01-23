@@ -74,7 +74,7 @@ public class TeleOp extends LinearOpMode {
                     )
             );
             //arm
-            armMotor.setPower(-gamepad2.right_stick_y*2/3);
+            armMotor.setPower(-gamepad2.right_stick_y/2);
             //carousel spinner
             if(gamepad2.dpad_right) carouselSpinner.setPower(0.60);
             if(gamepad2.dpad_left) carouselSpinner.setPower(-0.60);
@@ -85,6 +85,7 @@ public class TeleOp extends LinearOpMode {
             if(gamepad2.a) box.setPosition(collectionBoxPosition);
             if(gamepad2.b) box.setPosition(carryingBoxPosition);
             if(gamepad2.x) box.setPosition(droppingBoxPosition);
+            if(gamepad2.right_stick_y!=0) box.setPosition(carryingBoxPosition);
         }
     }
 }
