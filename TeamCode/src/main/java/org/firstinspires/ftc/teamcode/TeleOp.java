@@ -68,16 +68,16 @@ public class TeleOp extends LinearOpMode {
         while(opModeIsActive()) {
             drive.setWeightedDrivePower(
                     new Pose2d(
-                            -gamepad1.left_stick_y,
-                            -gamepad1.left_stick_x,
-                            -gamepad1.right_stick_x
+                            -gamepad1.left_stick_y/2,
+                            -gamepad1.right_stick_x/2,
+                            -gamepad1.left_stick_x/2
                     )
             );
             //arm
-            armMotor.setPower(-gamepad2.right_stick_y/2);
+            armMotor.setPower(-gamepad2.right_stick_y);
             //carousel spinner
-            if(gamepad2.dpad_right) carouselSpinner.setPower(0.60);
-            if(gamepad2.dpad_left) carouselSpinner.setPower(-0.60);
+            if(gamepad2.dpad_right) carouselSpinner.setPower(0.70);
+            if(gamepad2.dpad_left) carouselSpinner.setPower(-0.70);
             if(gamepad2.dpad_up) carouselSpinner.setPower(0.00);
             //intake
             intake.setPower(-gamepad2.left_stick_y);
@@ -85,7 +85,7 @@ public class TeleOp extends LinearOpMode {
             if(gamepad2.a) box.setPosition(collectionBoxPosition);
             if(gamepad2.b) box.setPosition(carryingBoxPosition);
             if(gamepad2.x) box.setPosition(droppingBoxPosition);
-            if(gamepad2.right_stick_y!=0) box.setPosition(carryingBoxPosition);
+//            if(gamepad2.right_stick_y!=0) box.setPosition(carryingBoxPosition);
         }
     }
 }

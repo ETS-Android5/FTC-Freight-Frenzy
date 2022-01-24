@@ -72,7 +72,7 @@ public class autoSecondLevelRun extends LinearOpMode {
 
         drive = new SampleMecanumDrive(hardwareMap);
 
-        Trajectory t1=drive.trajectoryBuilder(new Pose2d(0,0,Math.toRadians(-103))).back(41).build();
+        Trajectory t1=drive.trajectoryBuilder(new Pose2d(0,0,Math.toRadians(-100))).back(41).build();
         Trajectory t2=drive.trajectoryBuilder(t1.end()).forward(26.5).build();
         Trajectory t7=drive.trajectoryBuilder(t1.end()).forward(26).build();
         Trajectory t5=drive.trajectoryBuilder(t2.end()).strafeLeft(26).build();
@@ -87,8 +87,7 @@ public class autoSecondLevelRun extends LinearOpMode {
             drive.turn(Math.toRadians(-100));
             drive.followTrajectory(t1);
             carouselSpinner.setPower(0.6);
-            sleep(2000);
-            carouselSpinner.setPower(0);
+            sleep(2500);
             drive.followTrajectory(t2);
             drive.followTrajectory(t5);
             drive.turn(Math.toRadians(-180 ));
@@ -99,12 +98,11 @@ public class autoSecondLevelRun extends LinearOpMode {
 
             box.setPosition(droppingBoxPosition);
             sleep(500);
-            drive.turn(Math.toRadians(-200));
+            drive.turn(Math.toRadians(-190));
             box.setPosition(carryingBoxPosition);
-            armMotor.setPower(-0.8);
+            armMotor.setPower(-1.00);
             drive.followTrajectory(t3);
             armMotor.setPower(0.00);
-            box.setPosition(collectionBoxPosition);
             intake.setPower(1.00);
             drive.followTrajectory(t6);
 //

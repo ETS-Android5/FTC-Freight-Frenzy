@@ -22,7 +22,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-@Autonomous(name = "AutoSecondLevelRun", group = "teleop")
+@Autonomous(name = "AutoFirstLevelRun", group = "teleop")
 public class autoFirstLevelRun extends LinearOpMode {
     private FtcDashboard dashboard = FtcDashboard.getInstance();
 
@@ -72,8 +72,8 @@ public class autoFirstLevelRun extends LinearOpMode {
 
         drive = new SampleMecanumDrive(hardwareMap);
 
-        Trajectory t1=drive.trajectoryBuilder(new Pose2d(0,0,Math.toRadians(-103))).back(41).build();
-        Trajectory t2=drive.trajectoryBuilder(t1.end()).forward(26.5).build();
+        Trajectory t1=drive.trajectoryBuilder(new Pose2d(0,0,Math.toRadians(-100))).back(39.5 ).build();
+        Trajectory t2=drive.trajectoryBuilder(t1.end()).forward(25).build();
         Trajectory t7=drive.trajectoryBuilder(t1.end()).forward(26).build();
         Trajectory t5=drive.trajectoryBuilder(t2.end()).strafeLeft(26).build();
         Trajectory t3=drive.trajectoryBuilder(t5.end()).strafeRight(39).build();
@@ -87,24 +87,22 @@ public class autoFirstLevelRun extends LinearOpMode {
             drive.turn(Math.toRadians(-100));
             drive.followTrajectory(t1);
             carouselSpinner.setPower(0.6);
-            sleep(2000);
-            carouselSpinner.setPower(0);
+            sleep(2500);
             drive.followTrajectory(t2);
             drive.followTrajectory(t5);
             drive.turn(Math.toRadians(-180 ));
             //move arm up
             armMotor.setPower(0.8);
-            sleep(1300);
+            sleep(1250);
             armMotor.setPower(0.0);
 
             box.setPosition(droppingBoxPosition);
             sleep(500);
-            drive.turn(Math.toRadians(-200));
+            drive.turn(Math.toRadians(-190));
             box.setPosition(carryingBoxPosition);
-            armMotor.setPower(-0.8);
+            armMotor.setPower(-1.00);
             drive.followTrajectory(t3);
             armMotor.setPower(0.00);
-            box.setPosition(collectionBoxPosition);
             intake.setPower(1.00);
             drive.followTrajectory(t6);
 //
