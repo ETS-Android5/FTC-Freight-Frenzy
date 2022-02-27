@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.samples;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -8,7 +7,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
@@ -16,8 +14,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 
 /**
  * This OpMode illustrates using a webcam to locate and drive towards ANY Vuforia target.
@@ -43,15 +39,15 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuild
  * is explained below.
  */
 
-@TeleOp(name="Target Recognition", group = "Visualization")
-//@Disabled
-public class VuforiaDetection extends LinearOpMode
+@TeleOp(name="Drive To Target", group = "Concept")
+@Disabled
+public class ConceptVuforiaDriveToTargetWebcam extends LinearOpMode
 {
     // Adjust these numbers to suit your robot.
     final double DESIRED_DISTANCE = 8.0; //  this is how close the camera should get to the target (inches)
-    //  The GAIN constants set the relationship between the measured position error,
-    //  and how much power is applied to the drive motors.  Drive = Error * Gain
-    //  Make these values smaller for smoother control.
+                                         //  The GAIN constants set the relationship between the measured position error,
+                                         //  and how much power is applied to the drive motors.  Drive = Error * Gain
+                                         //  Make these values smaller for smoother control.
     final double SPEED_GAIN =   0.02 ;   //  Speed Control "Gain". eg: Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
     final double TURN_GAIN  =   0.01 ;   //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
 
@@ -70,13 +66,14 @@ public class VuforiaDetection extends LinearOpMode
      * and paste it in to your code on the next line, between the double quotes.
      */
     private static final String VUFORIA_KEY =
-            "AQdCgD3/////AAABmbb936QBr0JtryxLPUieTtUP2lCtx0XyKZmdtdtn8xWs3BUCGcsfcn5ZWYNNAYos6J0FMzH8Ic1a+jwqyR65mSpTR0fzQqrx4tSEx0SXJZu1796H4wFTXfGBtP0sIGpL8zgMgcocU4gJm3kkco+Rz4vxlPXAtRf5av0tyr/nYjxVKiyuwS0nRhUlHKd+d0zeL0vM6rHv6dONPV3lCbYRkrMOaFfwSZPGO05fNv+dr+4Idl0uoxNEI3WvylfKKiGFxgsYZRbrvtuKyj3WHYVo2U3rGfpM2EysGYI9ytFDVD2Q5dEWaHGGgKrz7RUo/cnXC6YM6JzhaXjlqHGjYXWVPrab4XTDCl+H/dDM/lsgNtNP";
+            " --- YOUR NEW VUFORIA KEY GOES HERE  --- ";
 
     VuforiaLocalizer vuforia    = null;
     OpenGLMatrix targetPose     = null;
     String targetName           = "";
 
-//    private SampleMecanumDrive drive=new SampleMecanumDrive(hardwareMap);
+//    private DcMotor leftDrive   = null;
+//    private DcMotor rightDrive  = null;
 
     @Override public void runOpMode()
     {
@@ -99,12 +96,25 @@ public class VuforiaDetection extends LinearOpMode
         this.vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
         // Load the trackable objects from the Assets file, and give them meaningful names
-        VuforiaTrackables targetsFreightFrenzy = this.vuforia.loadTrackablesFromAsset("TeamMarkers_FreightFrenzy");
-        targetsFreightFrenzy.get(0).setName("SPIDEY");
-        targetsFreightFrenzy.get(1).setName("SPIDEYCUBE");
+        VuforiaTrackables targetsFreightFrenzy = this.vuforia.loadTrackablesFromAsset("UltimateGoal");
+        targetsFreightFrenzy.get(0).setName("Blue Storage");
+        targetsFreightFrenzy.get(1).setName("Blue Alliance Wall");
+        targetsFreightFrenzy.get(2).setName("Red Storage");
+        targetsFreightFrenzy.get(3).setName("Red Alliance Wall");
 
         // Start tracking targets in the background
         targetsFreightFrenzy.activate();
+
+        // Initialize the hardware variables. Note that the strings used here as parameters
+        // to 'get' must correspond to the names assigned during the robot configuration
+        // step (using the FTC Robot Controller app on the phone).
+//        leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
+//        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
+
+        // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
+        // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
+//        leftDrive.setDirection(DcMotor.Direction.FORWARD);
+//        rightDrive.setDirection(DcMotor.Direction.REVERSE);
 
         telemetry.addData(">", "Press Play to start");
         telemetry.update();
@@ -114,6 +124,8 @@ public class VuforiaDetection extends LinearOpMode
         boolean targetFound     = false;    // Set to true when a target is detected by Vuforia
         double  targetRange     = 0;        // Distance from camera to target in Inches
         double  targetBearing   = 0;        // Robot Heading, relative to target.  Positive degrees means target is to the right.
+        double  drive           = 0;        // Desired forward power (-1 to +1)
+        double  turn            = 0;        // Desired turning power (-1 to +1)
 
         while (opModeIsActive())
         {
@@ -121,10 +133,8 @@ public class VuforiaDetection extends LinearOpMode
             targetFound = false;
             for (VuforiaTrackable trackable : targetsFreightFrenzy)
             {
-                telemetry.addData("Target ", trackable.getName());
                 if (((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible())
                 {
-                    telemetry.addData("found", trackable.getName());
                     targetPose = ((VuforiaTrackableDefaultListener)trackable.getListener()).getVuforiaCameraFromTarget();
 
                     // if we have a target, process the "pose" to determine the position of the target relative to the robot.
@@ -166,21 +176,25 @@ public class VuforiaDetection extends LinearOpMode
                 double  rangeError   = (targetRange - DESIRED_DISTANCE);
                 double  headingError = targetBearing;
 
-                /*if(!drive.isBusy()) {
+                // Use the speed and turn "gains" to calculate how we want the robot to move.
+                drive = rangeError * SPEED_GAIN;
+                turn  = headingError * TURN_GAIN ;
 
-                }*/
+                telemetry.addData("Auto","Drive %5.2f, Turn %5.2f", drive, turn);
             } else {
 
-
-                /*drive.setWeightedDrivePower(
-                        new Pose2d(
-                                -gamepad1.left_stick_y/2,
-                                -gamepad1.right_stick_x/2,
-                                -gamepad1.left_stick_x/2
-                        )
-                );*/
+                // drive using manual POV Joystick mode.
+                drive = -gamepad1.left_stick_y  / 2.0;  // Reduce drive rate to 50%.
+                turn  =  gamepad1.right_stick_x / 4.0;  // Reduce turn rate to 25%.
+                telemetry.addData("Manual","Drive %5.2f, Turn %5.2f", drive, turn);
             }
             telemetry.update();
+
+            // Calculate left and right wheel powers and send to them to the motors.
+            double leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
+            double rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
+//            leftDrive.setPower(leftPower);
+//            rightDrive.setPower(rightPower);
 
             sleep(10);
         }
