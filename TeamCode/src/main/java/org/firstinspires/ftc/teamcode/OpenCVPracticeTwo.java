@@ -16,8 +16,8 @@ public class OpenCVPracticeTwo extends LinearOpMode {
     public void runOpMode() throws InterruptedException{
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         OpenCvCamera camera = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
-        PracticeCV practice = new PracticeCV(telemetry);
-        camera.setPipeline(practice);
+        TeamElementPipeline element = new TeamElementPipeline(telemetry);
+        camera.setPipeline(element);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
@@ -36,8 +36,18 @@ public class OpenCVPracticeTwo extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()){
-            telemetry.addData("NOW", "streaming");
+            telemetry.addData("Average for left: ", element.getAverage1());
+            telemetry.addData("Average for right: ", element.getAverage2());
+            int pos = element.getAnalysis();
+            if (pos==0){
+                telemetry.addData("Element pos: ", "left");
+            }else if (pos==1){
+                telemetry.addData("Element pos: ", "right");
+            }else{
+                telemetry.addData("Element pos: ", "not in frame");
+            }
             telemetry.update();
+            sleep(50);
         }
     }
 }
