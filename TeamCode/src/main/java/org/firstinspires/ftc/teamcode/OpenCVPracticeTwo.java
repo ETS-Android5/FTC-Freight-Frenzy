@@ -40,6 +40,11 @@ public class OpenCVPracticeTwo extends LinearOpMode {
         while (opModeIsActive() && !isStopRequested()){
             telemetry.addData("Average for left: ", element.getAverage1());
             telemetry.addData("Average for right: ", element.getAverage2());
+            int col = element.getColor();
+            String curColor = "red";
+            if (col==1){
+                curColor = "yellow";
+            }
             int pos = element.getAnalysis();
             if (pos==0){
                 telemetry.addData("Element pos: ", "left");
@@ -48,6 +53,7 @@ public class OpenCVPracticeTwo extends LinearOpMode {
             }else{
                 telemetry.addData("Element pos: ", "not in frame");
             }
+            telemetry.addData("Color: ", curColor);
             telemetry.update();
             sleep(50);
         }

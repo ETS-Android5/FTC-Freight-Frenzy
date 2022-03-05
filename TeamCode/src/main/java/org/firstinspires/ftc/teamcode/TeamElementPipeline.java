@@ -22,10 +22,10 @@ public class TeamElementPipeline extends OpenCvPipeline {
 
     static final int threshold = 100;
 
-    static final Point REGION1_TLEFT = new Point(30,160);
-    static final Point REGION2_TLEFT = new Point(130,160);
-    static final Point REGION1_BRIGHT = new Point(100,90);
-    static final Point REGION2_BRIGHT = new Point(200,90);
+    static final Point REGION1_TLEFT = new Point(160,75);
+    static final Point REGION1_BRIGHT = new Point(230,165);
+    static final Point REGION2_TLEFT = new Point(290,75);
+    static final Point REGION2_BRIGHT = new Point(360,165);
 
     public TeamElementPipeline(Telemetry t){
         telemetry = t;
