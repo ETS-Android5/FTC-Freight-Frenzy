@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.TeamElementPipeline;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -40,7 +41,7 @@ public class OpenCVPracticeTwo extends LinearOpMode {
         while (opModeIsActive() && !isStopRequested()){
             telemetry.addData("Average for left: ", element.getAverage1());
             telemetry.addData("Average for right: ", element.getAverage2());
-            int col = element.getColor();
+            int col = element.getAnalysis();
             String curColor = "red";
             if (col==1){
                 curColor = "yellow";

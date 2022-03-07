@@ -21,15 +21,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import static org.firstinspires.ftc.teamcode.util.Constants.*;
 
 @Autonomous(name = "AutoSecondLevelRun", group = "teleop")
 public class autoSecondLevelRun extends LinearOpMode {
     private FtcDashboard dashboard = FtcDashboard.getInstance();
 
     private SampleMecanumDrive drive ;
-    private double collectionBoxPosition=0.1;
-    private double carryingBoxPosition=0.25;
-    private double droppingBoxPosition=0.6;
+
     DcMotorEx leftFront;
     DcMotorEx rightFront;
     DcMotorEx leftRear;

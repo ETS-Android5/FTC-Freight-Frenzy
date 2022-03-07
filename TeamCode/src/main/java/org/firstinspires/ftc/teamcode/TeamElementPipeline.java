@@ -9,6 +9,8 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+import static org.firstinspires.ftc.teamcode.util.Constants.*;
+
 public class TeamElementPipeline extends OpenCvPipeline {
     Telemetry telemetry;
     Mat matY = new Mat();
@@ -17,15 +19,6 @@ public class TeamElementPipeline extends OpenCvPipeline {
     Mat Cb = new Mat();
     //0 is left, 1 is center, 2 is right
     int position, avg1, avg2;
-    static final Scalar BLUE = new Scalar(0, 0, 255);
-    static final Scalar GREEN = new Scalar(0, 255, 0);
-
-    static final int threshold = 100;
-
-    static final Point REGION1_TLEFT = new Point(160,75);
-    static final Point REGION1_BRIGHT = new Point(230,165);
-    static final Point REGION2_TLEFT = new Point(290,75);
-    static final Point REGION2_BRIGHT = new Point(360,165);
 
     public TeamElementPipeline(Telemetry t){
         telemetry = t;
