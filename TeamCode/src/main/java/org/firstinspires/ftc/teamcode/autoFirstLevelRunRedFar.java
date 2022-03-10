@@ -8,26 +8,19 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
+
 import static org.firstinspires.ftc.teamcode.util.Constants.*;
 
 
-@Autonomous(name = "AutoFirstLevelRun", group = "teleop")
-public class autoFirstLevelRunRed extends LinearOpMode {
+@Autonomous(name = "AutoFirstLevelRunRedFar", group = "teleop")
+public class autoFirstLevelRunRedFar extends LinearOpMode {
     private FtcDashboard dashboard = FtcDashboard.getInstance();
 
     private SampleMecanumDrive drive ;
@@ -51,9 +44,9 @@ public class autoFirstLevelRunRed extends LinearOpMode {
     BNO055IMU imu;
     Orientation angles;
     Acceleration gravity;
+    VISUALIZATION_DETERMINED teamMarkerState;
 
     Pose2d startPose=new Pose2d();
-    private double forwardToCarousel;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -85,17 +78,23 @@ public class autoFirstLevelRunRed extends LinearOpMode {
         box.setPosition(carryingBoxPosition);
 
         Trajectory t1=drive.trajectoryBuilder(new Pose2d(0, 0,0))
-                .forward(forwardToCarousel)
+                .splineToSplineHeading(splineToShippingHubClose, 0.7)
                 .build();
 
-//        Trajectory t2=drive.trajectoryBuilder(t1.end())
-//                .
+        Trajectory t2=drive.trajectoryBuilder(t1.end())
+                .strafeLeft(strafeCarousel)
+                .build();
 
         waitForStart();
         if ((opModeIsActive() && !isStopRequested())) {
             drive.followTrajectory(t1);
+            switch(teamMarkerState) {
+                case LEFT: armMotor.setTargetPosition(armHeight1Position);
+                case CENTER: armMotor.setTargetPosition(armHeight2Position);
+                case RIGHT: armMotor.setTargetPosition(armHeight3Position);
+                case UNDETERMINED: armMotor.setTargetPosition(armHeight3Position);
+            }
             spinCarousel();
-            sleep(2000);
 
         }
     }

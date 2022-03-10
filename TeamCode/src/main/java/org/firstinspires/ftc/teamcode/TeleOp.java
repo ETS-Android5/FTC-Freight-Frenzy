@@ -31,6 +31,10 @@ public class TeleOp extends LinearOpMode {
 
     public DcMotor intake;
 
+    public double constant=1;
+
+    private boolean RUN_USING_ENCODER=false;
+
     public ElevatorFeedforward kj=new ElevatorFeedforward(elevKS,elevKV,elevKA,elevKG);
 
     Servo box;
@@ -52,6 +56,9 @@ public class TeleOp extends LinearOpMode {
 //box Servo
         box=hardwareMap.get(Servo.class, "box");
 
+        drive = new SampleMecanumDrive(hardwareMap);
+        drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         if (RUN_USING_ENCODER) {
             RobotLog.setGlobalErrorMsg("Feedforward constants usually don't need to be tuned " +
                     "when using the built-in drive motor velocity PID.");
@@ -59,7 +66,6 @@ public class TeleOp extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
-        drive = new SampleMecanumDrive(hardwareMap);
 
         NanoClock clock = NanoClock.system();
 
@@ -67,11 +73,14 @@ public class TeleOp extends LinearOpMode {
         while(opModeIsActive()) {
             drive.setWeightedDrivePower(
                     new Pose2d(
-                            -gamepad1.left_stick_y,
-                            -gamepad1.right_stick_x,
-                            -gamepad1.left_stick_x
+                            -gamepad1.left_stick_y*constant,
+                            -gamepad1.right_stick_x*constant,
+                            -gamepad1.left_stick_x*constant
                     )
             );
+            if(gamepad1.y) constant=0.25;
+            if(gamepad1.a) constant=1;
+
             //arm
             if(gamepad2.right_stick_y!=0) {
                 armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -127,12 +136,15 @@ public class TeleOp extends LinearOpMode {
             if(gamepad2.dpad_right) box.setPosition(carryingBoxPosition);
             if(gamepad2.dpad_up) box.setPosition(droppingBoxPosition);
 
-            if(armMotor.getCurrentPosition()<20) {
-                box.setPosition(collectionBoxPosition);
+            if(gamepad2.right_trigger==0) {
+                if(armMotor.getCurrentPosition()<20) {
+                    box.setPosition(collectionBoxPosition);
+                }
+                else if(armMotor.getCurrentPosition()<armHeight3Position-20) {
+                    box.setPosition(carryingBoxPosition);
+                }
             }
-            else if(armMotor.getCurrentPosition()<2480) {
-                box.setPosition(carryingBoxPosition);
-            }
+
 
             telemetry.addData("Current Position: ", armMotor.getCurrentPosition());
             telemetry.addData("Target Position: ", armMotor.getTargetPosition());
