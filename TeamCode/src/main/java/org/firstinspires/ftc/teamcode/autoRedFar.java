@@ -19,8 +19,8 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import static org.firstinspires.ftc.teamcode.util.Constants.*;
 
 
-@Autonomous(name = "AutoFirstLevelRunRedFar", group = "teleop")
-public class autoFirstLevelRunRedFar extends LinearOpMode {
+@Autonomous(name = "AutoRedFar", group = "teleop")
+public class autoRedFar extends LinearOpMode {
     private FtcDashboard dashboard = FtcDashboard.getInstance();
 
 
@@ -79,11 +79,15 @@ public class autoFirstLevelRunRedFar extends LinearOpMode {
         box.setPosition(carryingBoxPosition);
 
         Trajectory t1=drive.trajectoryBuilder(new Pose2d(0, 0,0))
-                .splineToSplineHeading(splineToShippingHubClose, 0.7)
+                .splineToLinearHeading(splineToShippingHubClose, 0.0)
                 .build();
 
         Trajectory t2=drive.trajectoryBuilder(t1.end())
-                .strafeLeft(strafeCarousel)
+                .splineToSplineHeading(splineCarouselClose, -35.0)
+                .build();
+
+        Trajectory t3=drive.trajectoryBuilder(t2.end())
+                .back(backDepo)
                 .build();
 
         waitForStart();
@@ -95,8 +99,12 @@ public class autoFirstLevelRunRedFar extends LinearOpMode {
                 case RIGHT: armMotor.setTargetPosition(armHeight3Position);
                 case UNDETERMINED: armMotor.setTargetPosition(armHeight3Position);
             }
+            armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            while(drive.isBusy()) ;
+            box.setPosition(droppingBoxPosition);
+            drive.followTrajectory(t2);
             spinCarousel();
-
+            drive.followTrajectory(t3);
         }
     }
 

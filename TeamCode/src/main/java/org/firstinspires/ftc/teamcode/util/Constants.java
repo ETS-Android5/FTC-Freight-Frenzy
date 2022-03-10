@@ -21,7 +21,8 @@ public class Constants {
     public static double droppingBoxPosition=1.0;
 
     public static Pose2d splineToShippingHubClose =new Pose2d(36,-18,7*Math.PI/4);
-    public static double strafeCarousel=72;
+    public static Pose2d splineCarouselClose=new Pose2d(-36.0, 54.0, Math.PI/2);
+    public static double backDepo=150;
 
     public static double elevKS = 0.268/2.54;
     public static double elevKV = 1.89/2.54;
