@@ -32,7 +32,6 @@ public class Constants {
     public static int armHeight3Position=2700;
     public static int armHeight2Position=1800;
     public static int armHeight1Position=1500;
-
     public static final Scalar BLUE = new Scalar(0, 0, 255);
     public static final Scalar GREEN = new Scalar(0, 255, 0);
 
