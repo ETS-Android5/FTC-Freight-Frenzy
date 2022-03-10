@@ -36,7 +36,7 @@ public class Constants {
     public static final Scalar BLUE = new Scalar(0, 0, 255);
     public static final Scalar GREEN = new Scalar(0, 255, 0);
 
-    public static final int threshold = 100;
+    public static final int difference = 15;
 
     public static final Point REGION1_TLEFT = new Point(160,75);
     public static final Point REGION1_BRIGHT = new Point(230,165);

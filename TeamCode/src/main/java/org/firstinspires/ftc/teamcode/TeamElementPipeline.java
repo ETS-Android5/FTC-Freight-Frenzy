@@ -40,10 +40,12 @@ public class TeamElementPipeline extends OpenCvPipeline {
         avg1 = (int) Core.mean(region1).val[0];
         avg2 = (int) Core.mean(region2).val[0];
 
-        if (avg1<threshold){
-            position = 0;
-        }else if (avg2<threshold){
-            position = 1;
+        if (Math.abs(avg1-avg2)>=difference) {
+            if (avg1<avg2){
+                position = 0;
+            }else{
+                position = 1;
+            }
         }else{
             position = 2;
         }
