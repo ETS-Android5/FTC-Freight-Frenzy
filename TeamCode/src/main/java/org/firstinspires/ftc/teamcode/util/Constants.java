@@ -34,18 +34,14 @@ public class Constants {
     public static int armHeight1Position=1500;
     public static final Scalar BLUE = new Scalar(0, 0, 255);
     public static final Scalar GREEN = new Scalar(0, 255, 0);
-
-    public static final int difference = 10;
+    public static final Scalar RED = new Scalar(255, 0, 0);
 
     public static final Point REGION1_TLEFT = new Point(155,45);
     public static final Point REGION1_BRIGHT = new Point(245,85);
     public static final Point REGION2_TLEFT = new Point(295,45);
     public static final Point REGION2_BRIGHT = new Point(385,85);
-
-//    public static final Point REGION1_TLEFT = new Point(150,20);
-//    public static final Point REGION1_BRIGHT = new Point(220,80);
-//    public static final Point REGION2_TLEFT = new Point(280,20);
-//    public static final Point REGION2_BRIGHT = new Point(350,80);
+    public static final Point REGION3_TLEFT = new Point(155,45);
+    public static final Point REGION3_BRIGHT = new Point(245,85);
 
     public static enum VISUALIZATION_DETERMINED {
         LEFT, RIGHT, CENTER, UNDETERMINED

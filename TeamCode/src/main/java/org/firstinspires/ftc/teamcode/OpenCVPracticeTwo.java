@@ -40,21 +40,16 @@ public class OpenCVPracticeTwo extends LinearOpMode {
 
         while (opModeIsActive() && !isStopRequested()){
             telemetry.addData("Average for left: ", element.getAverage1());
-            telemetry.addData("Average for right: ", element.getAverage2());
-            int col = element.getAnalysis();
-            String curColor = "red";
-            if (col==1){
-                curColor = "yellow";
-            }
+            telemetry.addData("Average for center: ", element.getAverage2());
+            telemetry.addData("Average for right: ", element.getAverage3());
             int pos = element.getAnalysis();
             if (pos==0){
-                telemetry.addData("Element pos: ", "center");
-            }else if (pos==1){
                 telemetry.addData("Element pos: ", "left");
+            }else if (pos==1){
+                telemetry.addData("Element pos: ", "center");
             }else{
                 telemetry.addData("Element pos: ", "right");
             }
-            telemetry.addData("Color: ", curColor);
             telemetry.update();
             sleep(50);
         }
