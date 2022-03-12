@@ -21,8 +21,7 @@ public class Constants {
     public static double droppingBoxPosition=1.0;
 
     public static Pose2d splineToShippingHubClose =new Pose2d(36,-18,7*Math.PI/4);
-    public static Pose2d splineCarouselClose=new Pose2d(-36.0, 54.0, Math.PI/2);
-    public static double backDepo=150;
+    public static double strafeCarousel=72;
 
     public static double elevKS = 0.268/2.54;
     public static double elevKV = 1.89/2.54;
@@ -36,12 +35,17 @@ public class Constants {
     public static final Scalar BLUE = new Scalar(0, 0, 255);
     public static final Scalar GREEN = new Scalar(0, 255, 0);
 
-    public static final int difference = 15;
+    public static final int difference = 10;
 
-    public static final Point REGION1_TLEFT = new Point(160,75);
-    public static final Point REGION1_BRIGHT = new Point(230,165);
-    public static final Point REGION2_TLEFT = new Point(290,75);
-    public static final Point REGION2_BRIGHT = new Point(360,165);
+    public static final Point REGION1_TLEFT = new Point(155,45);
+    public static final Point REGION1_BRIGHT = new Point(245,85);
+    public static final Point REGION2_TLEFT = new Point(295,45);
+    public static final Point REGION2_BRIGHT = new Point(385,85);
+
+//    public static final Point REGION1_TLEFT = new Point(150,20);
+//    public static final Point REGION1_BRIGHT = new Point(220,80);
+//    public static final Point REGION2_TLEFT = new Point(280,20);
+//    public static final Point REGION2_BRIGHT = new Point(350,80);
 
     public static enum VISUALIZATION_DETERMINED {
         LEFT, RIGHT, CENTER, UNDETERMINED

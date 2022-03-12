@@ -48,11 +48,11 @@ public class OpenCVPracticeTwo extends LinearOpMode {
             }
             int pos = element.getAnalysis();
             if (pos==0){
-                telemetry.addData("Element pos: ", "left");
+                telemetry.addData("Element pos: ", "center");
             }else if (pos==1){
-                telemetry.addData("Element pos: ", "right");
+                telemetry.addData("Element pos: ", "left");
             }else{
-                telemetry.addData("Element pos: ", "not in frame");
+                telemetry.addData("Element pos: ", "right");
             }
             telemetry.addData("Color: ", curColor);
             telemetry.update();
