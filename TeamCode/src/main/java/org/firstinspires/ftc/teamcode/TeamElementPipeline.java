@@ -19,10 +19,18 @@ public class TeamElementPipeline extends OpenCvPipeline {
     Mat region3;
     Mat Cb = new Mat();
     //0 is left, 1 is center, 2 is right
-    int position, avg1, avg2, avg3;
+    int avg1, avg2, avg3;
+    VISUALIZATION_DETERMINED position;
 
-    public TeamElementPipeline(Telemetry t){
+    Point[] points;
+
+    public TeamElementPipeline(Telemetry t, boolean isRight){
         telemetry = t;
+        if (isRight){
+            points = RIGHT_POINTS;
+        }else{
+            points = LEFT_POINTS;
+        }
     }
     private void inputToCb(Mat input) {
         Imgproc.cvtColor(input, matY, Imgproc.COLOR_RGB2YCrCb);
@@ -31,9 +39,9 @@ public class TeamElementPipeline extends OpenCvPipeline {
     @Override
     public void init(Mat input) {
         inputToCb(input);
-        region1 = Cb.submat(new Rect(REGION1_TLEFT, REGION1_BRIGHT));
-        region2 = Cb.submat(new Rect(REGION2_TLEFT, REGION2_BRIGHT));
-        region3 = Cb.submat(new Rect(REGION3_TLEFT, REGION3_BRIGHT));
+        region1 = Cb.submat(new Rect(points[1], points[0]));
+        region2 = Cb.submat(new Rect(points[3], points[2]));
+        region3 = Cb.submat(new Rect(points[5], points[4]));
     }
     @Override
     public Mat processFrame(Mat input){
@@ -50,20 +58,20 @@ public class TeamElementPipeline extends OpenCvPipeline {
 
         int max = Math.max(Math.max(diff1, diff2), diff3);
         if (diff1==max){
-            position = 0;
+            position = VISUALIZATION_DETERMINED.LEFT;
         }else if (diff2==max){
-            position = 1;
+            position = VISUALIZATION_DETERMINED.CENTER;
         }else{
-            position = 2;
+            position = VISUALIZATION_DETERMINED.RIGHT;
         }
         Imgproc.cvtColor(input, matY, Imgproc.COLOR_RGB2YCrCb);
-        Imgproc.rectangle(input, REGION1_TLEFT, REGION1_BRIGHT, BLUE, 2);
-        Imgproc.rectangle(input, REGION2_TLEFT, REGION2_BRIGHT, GREEN, 2);
-        Imgproc.rectangle(input, REGION3_TLEFT, REGION3_BRIGHT, RED, 2);
+        Imgproc.rectangle(input, points[1], points[0], BLUE, 2);
+        Imgproc.rectangle(input, points[3], points[2], GREEN, 2);
+        Imgproc.rectangle(input, points[5], points[4], RED, 2);
         return input;
     }
 
-    public int getAnalysis()
+    public VISUALIZATION_DETERMINED getAnalysis()
     {
         return position;
     }

@@ -36,12 +36,26 @@ public class Constants {
     public static final Scalar GREEN = new Scalar(0, 255, 0);
     public static final Scalar RED = new Scalar(255, 0, 0);
 
-    public static final Point REGION1_TLEFT = new Point(155,45);
-    public static final Point REGION1_BRIGHT = new Point(245,85);
-    public static final Point REGION2_TLEFT = new Point(295,45);
-    public static final Point REGION2_BRIGHT = new Point(385,85);
-    public static final Point REGION3_TLEFT = new Point(155,45);
-    public static final Point REGION3_BRIGHT = new Point(245,85);
+
+    public static final Point LEFT_REGION1_TLEFT = new Point(45,200);
+    public static final Point LEFT_REGION1_BRIGHT = new Point(135,240);
+    public static final Point LEFT_REGION2_TLEFT = new Point(175,195);
+    public static final Point LEFT_REGION2_BRIGHT = new Point(265, 235);
+    public static final Point LEFT_REGION3_TLEFT = new Point(340,175);
+    public static final Point LEFT_REGION3_BRIGHT = new Point(430,215);
+
+    public static final Point[] LEFT_POINTS = new Point[]{LEFT_REGION1_BRIGHT, LEFT_REGION1_TLEFT,
+    LEFT_REGION2_BRIGHT, LEFT_REGION2_TLEFT, LEFT_REGION3_BRIGHT, LEFT_REGION3_TLEFT};
+
+    public static final Point RIGHT_REGION1_TLEFT = new Point(75,175);
+    public static final Point RIGHT_REGION1_BRIGHT = new Point(165,215);
+    public static final Point RIGHT_REGION2_TLEFT = new Point(195,165);
+    public static final Point RIGHT_REGION2_BRIGHT = new Point(285, 205);
+    public static final Point RIGHT_REGION3_TLEFT = new Point(310,165);
+    public static final Point RIGHT_REGION3_BRIGHT = new Point(400,205);
+
+    public static final Point[] RIGHT_POINTS = new Point[]{RIGHT_REGION1_BRIGHT, RIGHT_REGION1_TLEFT
+    , RIGHT_REGION2_BRIGHT, RIGHT_REGION2_TLEFT, RIGHT_REGION3_BRIGHT, RIGHT_REGION3_TLEFT};
 
     public static enum VISUALIZATION_DETERMINED {
         LEFT, RIGHT, CENTER, UNDETERMINED

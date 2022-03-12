@@ -3,16 +3,15 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.TeamElementPipeline;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.util.Constants;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@Autonomous(name="TryingCV", group="teleop")
-public class OpenCVPracticeTwo extends LinearOpMode {
+@Autonomous(name="OpenCVFinal", group="teleop")
+public class OpenCVFinal extends LinearOpMode {
     OpenCvWebcam webcam;
 
     @Override
@@ -35,6 +34,19 @@ public class OpenCVPracticeTwo extends LinearOpMode {
                 telemetry.update();
             }
         });
+
+        while (!isStarted()){
+            Constants.VISUALIZATION_DETERMINED pos = element.getAnalysis();
+            if (pos== Constants.VISUALIZATION_DETERMINED.LEFT){
+                telemetry.addData("Element pos: ", "left");
+            }else if (pos== Constants.VISUALIZATION_DETERMINED.CENTER){
+                telemetry.addData("Element pos: ", "center");
+            }else{
+                telemetry.addData("Element pos: ", "right");
+            }
+            telemetry.update();
+            sleep(50);
+        }
 
         waitForStart();
 

@@ -82,13 +82,13 @@ public class autoRedFar extends LinearOpMode {
                 .splineToLinearHeading(splineToShippingHubClose, 0.0)
                 .build();
 
-        Trajectory t2=drive.trajectoryBuilder(t1.end())
-                .splineToSplineHeading(splineCarouselClose, -35.0)
-                .build();
+        //Trajectory t2=drive.trajectoryBuilder(t1.end())
+                //.splineToSplineHeading(splineCarouselClose, -35.0)
+                //.build();
 
-        Trajectory t3=drive.trajectoryBuilder(t2.end())
-                .back(backDepo)
-                .build();
+        //Trajectory t3=drive.trajectoryBuilder(t2.end())
+                //.back(backDepo)
+                //.build();
 
         waitForStart();
         if ((opModeIsActive() && !isStopRequested())) {
@@ -102,9 +102,9 @@ public class autoRedFar extends LinearOpMode {
             armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             while(drive.isBusy()) ;
             box.setPosition(droppingBoxPosition);
-            drive.followTrajectory(t2);
+            //drive.followTrajectory(t2);
             spinCarousel();
-            drive.followTrajectory(t3);
+            //drive.followTrajectory(t3);
         }
     }
 
