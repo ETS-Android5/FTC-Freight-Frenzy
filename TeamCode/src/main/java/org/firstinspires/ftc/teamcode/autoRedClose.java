@@ -19,8 +19,8 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import static org.firstinspires.ftc.teamcode.util.Constants.*;
 
 
-@Autonomous(name = "AutoRedFar", group = "teleop")
-public class autoRedFar extends LinearOpMode {
+@Autonomous(name = "AutoRedClose", group = "teleop")
+public class autoRedClose extends LinearOpMode {
     private FtcDashboard dashboard = FtcDashboard.getInstance();
 
 
@@ -45,7 +45,7 @@ public class autoRedFar extends LinearOpMode {
     BNO055IMU imu;
     Orientation angles;
     Acceleration gravity;
-    VISUALIZATION_DETERMINED teamMarkerState;
+    VISUALIZATION_DETERMINED teamMarkerState=VISUALIZATION_DETERMINED.RIGHT;
 
     Pose2d startPose=new Pose2d();
 
@@ -78,16 +78,16 @@ public class autoRedFar extends LinearOpMode {
 
         box.setPosition(carryingBoxPosition);
 
-        Trajectory t1=drive.trajectoryBuilder(new Pose2d(0, 0,0))
-                .splineToLinearHeading(splineToShippingHubClose, 0.0)
+        Trajectory t1=drive.trajectoryBuilder(new Pose2d(0, 0,Math.PI/2))
+                .splineToSplineHeading(splineToShippingHubClose, splineToShippingHubCloseEndTangent)
                 .build();
 
         Trajectory t2=drive.trajectoryBuilder(t1.end())
-                .splineToSplineHeading(splineCarouselClose, -35.0)
+                .splineToLinearHeading(splineCarouselClose, splineCarouselCloseEndTangent)
                 .build();
 
         Trajectory t3=drive.trajectoryBuilder(t2.end())
-                .back(backDepo)
+                .forward(forwardDepoClose)
                 .build();
 
         waitForStart();
@@ -100,10 +100,18 @@ public class autoRedFar extends LinearOpMode {
                 case UNDETERMINED: armMotor.setTargetPosition(armHeight3Position);
             }
             armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            while(drive.isBusy()) ;
+            armMotor.setPower(1);
+            while(drive.isBusy() || armMotor.isBusy()) ;
             box.setPosition(droppingBoxPosition);
+            sleep(500);
+            box.setPosition(carryingBoxPosition);
+            armMotor.setTargetPosition(0);
+            armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            armMotor.setPower(-1);
             drive.followTrajectory(t2);
             spinCarousel();
+            sleep(1500);
+            drive.turn(180);
             drive.followTrajectory(t3);
         }
     }

@@ -31,6 +31,8 @@ public class TeleOp extends LinearOpMode {
 
     public DcMotor intake;
 
+    public Servo capServo;
+
     public double constant=1;
 
     private boolean RUN_USING_ENCODER=false;
@@ -46,6 +48,8 @@ public class TeleOp extends LinearOpMode {
 //carouselSpinners
         carouselSpinner1 =hardwareMap.get(DcMotor.class, "carouselSpinner1");
         carouselSpinner2 =hardwareMap.get(DcMotor.class, "carouselSpinner2");
+
+        capServo=hardwareMap.get(Servo.class, "capServo");
 //arm
         armMotor=hardwareMap.get(DcMotorEx.class, "armMotor");
         armMotor.setTargetPosition(0);
@@ -117,20 +121,20 @@ public class TeleOp extends LinearOpMode {
             else if(gamepad2.right_stick_y==0&&armMotor.getMode()== DcMotor.RunMode.RUN_WITHOUT_ENCODER) armMotor.setPower(0);
 
             //carousel spinner
-            if(gamepad2.right_trigger>0) {
+            if(gamepad2.left_trigger>0) {
                 carouselSpinner1.setPower(0.70);
-                carouselSpinner2.setPower(-0.70);
-            }
-            else if(gamepad2.left_trigger>0) {
-                carouselSpinner1.setPower(-0.70);
                 carouselSpinner2.setPower(0.70);
+            }
+            else if(gamepad2.right_trigger>0) {
+                carouselSpinner1.setPower(-0.70);
+                carouselSpinner2.setPower(-0.70);
             }
             else {
                 carouselSpinner1.setPower(0.00);
                 carouselSpinner2.setPower(0.00);
             }
             //intake
-            intake.setPower(-gamepad2.left_stick_y/2);
+            intake.setPower(-gamepad2.left_stick_y/3);
             //box servo
             if(gamepad2.dpad_down) box.setPosition(collectionBoxPosition);
             if(gamepad2.dpad_right) box.setPosition(carryingBoxPosition);
@@ -145,11 +149,13 @@ public class TeleOp extends LinearOpMode {
                 }
             }
 
+            if(gamepad2.right_bumper) capServo.setPosition(capUp);
+            if(gamepad2.left_bumper) capServo.setPosition(capDown);
+            if(gamepad2.dpad_left) capServo.setPosition(capOut);
 
             telemetry.addData("Current Position: ", armMotor.getCurrentPosition());
             telemetry.addData("Target Position: ", armMotor.getTargetPosition());
             telemetry.update();
-
 
 //            if(gamepad2.right_stick_y!=0) box.setPosition(carryingBoxPosition);
         }
