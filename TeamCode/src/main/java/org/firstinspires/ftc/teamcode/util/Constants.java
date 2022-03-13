@@ -16,24 +16,12 @@ public class Constants {
     public static double PERPENDICULAR_X = 1.1811023622;
     public static double PERPENDICULAR_Y = -1.624015748;
 
-    public static double capUp=0.8;
-    public static double capOut=0.6;
-    public static double capDown=0.0;
-
     public static double collectionBoxPosition=0.3;
     public static double carryingBoxPosition=0.4;
     public static double droppingBoxPosition=1.0;
 
-    public static Pose2d splineToShippingHubClose =new Pose2d(36,-18,3*Math.PI/4);
-    public static double splineToShippingHubCloseEndTangent=-20;
-    public static Pose2d splineCarouselClose=new Pose2d(0, 57.0, Math.PI/2);
-    public static double splineCarouselCloseEndTangent=40;
-    public static double forwardDepoClose =106;
-
-    public static Pose2d splineToShippingHubFar =new Pose2d(36,18,Math.PI/4);
-    public static Pose2d splineDepoFar=new Pose2d(0, -6, 3*Math.PI/2);
-    public static double forwardDepoFar= 36;
-    public static double backDepoFar=42;
+    public static Pose2d splineToShippingHubClose =new Pose2d(36,-18,7*Math.PI/4);
+    public static double strafeCarousel=72;
 
     public static double elevKS = 0.268/2.54;
     public static double elevKV = 1.89/2.54;
@@ -46,13 +34,28 @@ public class Constants {
     public static int armHeight1Position=1500;
     public static final Scalar BLUE = new Scalar(0, 0, 255);
     public static final Scalar GREEN = new Scalar(0, 255, 0);
+    public static final Scalar RED = new Scalar(255, 0, 0);
 
-    public static final int difference = 15;
 
-    public static final Point REGION1_TLEFT = new Point(160,75);
-    public static final Point REGION1_BRIGHT = new Point(230,165);
-    public static final Point REGION2_TLEFT = new Point(290,75);
-    public static final Point REGION2_BRIGHT = new Point(360,165);
+    public static final Point LEFT_REGION1_TLEFT = new Point(45,200);
+    public static final Point LEFT_REGION1_BRIGHT = new Point(135,240);
+    public static final Point LEFT_REGION2_TLEFT = new Point(175,195);
+    public static final Point LEFT_REGION2_BRIGHT = new Point(265, 235);
+    public static final Point LEFT_REGION3_TLEFT = new Point(340,175);
+    public static final Point LEFT_REGION3_BRIGHT = new Point(430,215);
+
+    public static final Point[] LEFT_POINTS = new Point[]{LEFT_REGION1_BRIGHT, LEFT_REGION1_TLEFT,
+    LEFT_REGION2_BRIGHT, LEFT_REGION2_TLEFT, LEFT_REGION3_BRIGHT, LEFT_REGION3_TLEFT};
+
+    public static final Point RIGHT_REGION1_TLEFT = new Point(75,175);
+    public static final Point RIGHT_REGION1_BRIGHT = new Point(165,215);
+    public static final Point RIGHT_REGION2_TLEFT = new Point(195,165);
+    public static final Point RIGHT_REGION2_BRIGHT = new Point(285, 205);
+    public static final Point RIGHT_REGION3_TLEFT = new Point(310,165);
+    public static final Point RIGHT_REGION3_BRIGHT = new Point(400,205);
+
+    public static final Point[] RIGHT_POINTS = new Point[]{RIGHT_REGION1_BRIGHT, RIGHT_REGION1_TLEFT
+    , RIGHT_REGION2_BRIGHT, RIGHT_REGION2_TLEFT, RIGHT_REGION3_BRIGHT, RIGHT_REGION3_TLEFT};
 
     public static enum VISUALIZATION_DETERMINED {
         LEFT, RIGHT, CENTER, UNDETERMINED

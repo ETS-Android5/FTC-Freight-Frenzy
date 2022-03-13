@@ -12,9 +12,15 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.util.Constants;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvWebcam;
 
 import static org.firstinspires.ftc.teamcode.util.Constants.*;
 
@@ -22,7 +28,7 @@ import static org.firstinspires.ftc.teamcode.util.Constants.*;
 @Autonomous(name = "AutoRedFar", group = "teleop")
 public class autoRedFar extends LinearOpMode {
     private FtcDashboard dashboard = FtcDashboard.getInstance();
-
+    OpenCvWebcam webcam;
 
     private SampleMecanumDrive drive ;
     DcMotorEx leftFront;
@@ -82,13 +88,45 @@ public class autoRedFar extends LinearOpMode {
                 .splineToLinearHeading(splineToShippingHubClose, 0.0)
                 .build();
 
-        Trajectory t2=drive.trajectoryBuilder(t1.end())
-                .splineToSplineHeading(splineCarouselClose, -35.0)
-                .build();
+        //Trajectory t2=drive.trajectoryBuilder(t1.end())
+                //.splineToSplineHeading(splineCarouselClose, -35.0)
+                //.build();
 
-        Trajectory t3=drive.trajectoryBuilder(t2.end())
-                .back(backDepo)
-                .build();
+        //Trajectory t3=drive.trajectoryBuilder(t2.end())
+                //.back(backDepo)
+                //.build();
+
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        TeamElementPipeline element = new TeamElementPipeline(telemetry, true);
+        webcam.setPipeline(element);
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                webcam.startStreaming(640, 360, OpenCvCameraRotation.UPRIGHT);
+            }
+            @Override
+            public void onError(int errorCode)
+            {
+                telemetry.addData("COMEON", "NOPE");
+                telemetry.update();
+            }
+        });
+
+        while (!isStarted()){
+            teamMarkerState = element.getAnalysis();
+            if (teamMarkerState== Constants.VISUALIZATION_DETERMINED.LEFT){
+                telemetry.addData("Element pos: ", "left");
+            }else if (teamMarkerState== Constants.VISUALIZATION_DETERMINED.CENTER){
+                telemetry.addData("Element pos: ", "center");
+            }else{
+                telemetry.addData("Element pos: ", "right");
+            }
+            telemetry.update();
+            sleep(50);
+        }
 
         waitForStart();
         if ((opModeIsActive() && !isStopRequested())) {
@@ -102,9 +140,9 @@ public class autoRedFar extends LinearOpMode {
             armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             while(drive.isBusy()) ;
             box.setPosition(droppingBoxPosition);
-            drive.followTrajectory(t2);
+            //drive.followTrajectory(t2);
             spinCarousel();
-            drive.followTrajectory(t3);
+            //drive.followTrajectory(t3);
         }
     }
 
