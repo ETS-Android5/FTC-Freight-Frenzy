@@ -8,6 +8,7 @@ import com.arcrobotics.ftclib.controller.wpilibcontroller.ElevatorFeedforward;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -52,6 +53,7 @@ public class TeleOp extends LinearOpMode {
         capServo=hardwareMap.get(Servo.class, "capServo");
 //arm
         armMotor=hardwareMap.get(DcMotorEx.class, "armMotor");
+        armMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         armMotor.setTargetPosition(0);
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -95,28 +97,28 @@ public class TeleOp extends LinearOpMode {
                 targetPosition=armHeight3Position;
                 armMotor.setTargetPosition(targetPosition);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                armMotor.setPower(targetPosition <armMotor.getCurrentPosition()?1:-1);
+                armMotor.setPower(targetPosition >armMotor.getCurrentPosition()?1:-1);
             }
             else if(gamepad2.a) {
                 armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 targetPosition =armHeight2Position;
                 armMotor.setTargetPosition(targetPosition);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                armMotor.setPower(targetPosition <armMotor.getCurrentPosition()?1:-1);
+                armMotor.setPower(targetPosition >armMotor.getCurrentPosition()?1:-1);
             }
             else if(gamepad2.x) {
                 armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 targetPosition =armHeight1Position;
                 armMotor.setTargetPosition(targetPosition);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                armMotor.setPower(targetPosition <armMotor.getCurrentPosition()?1:-1);
+                armMotor.setPower(targetPosition >armMotor.getCurrentPosition()?1:-1);
             }
             else if(gamepad2.y) {
                 armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 targetPosition =0;
                 armMotor.setTargetPosition(targetPosition);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                armMotor.setPower(targetPosition <armMotor.getCurrentPosition()?1:-1);
+                armMotor.setPower(targetPosition >armMotor.getCurrentPosition()?1:-1);
             }
             else if(gamepad2.right_stick_y==0&&armMotor.getMode()== DcMotor.RunMode.RUN_WITHOUT_ENCODER) armMotor.setPower(0);
 
