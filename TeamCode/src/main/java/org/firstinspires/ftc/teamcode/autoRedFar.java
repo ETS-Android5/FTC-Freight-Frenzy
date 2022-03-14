@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -30,7 +31,7 @@ public class autoRedFar extends LinearOpMode {
     private FtcDashboard dashboard = FtcDashboard.getInstance();
     OpenCvWebcam webcam;
 
-    private SampleMecanumDrive drive ;
+    private SampleMecanumDrive drive;
     DcMotorEx leftFront;
     DcMotorEx rightFront;
     DcMotorEx leftRear;
@@ -51,8 +52,9 @@ public class autoRedFar extends LinearOpMode {
     BNO055IMU imu;
     Orientation angles;
     Acceleration gravity;
-    VISUALIZATION_DETERMINED teamMarkerState;
+    VISUALIZATION_DETERMINED teamMarkerState=VISUALIZATION_DETERMINED.UNDETERMINED;
 
+    int position=0;
     Pose2d startPose=new Pose2d();
 
     @Override
@@ -68,6 +70,7 @@ public class autoRedFar extends LinearOpMode {
         carouselSpinner2 =hardwareMap.get(DcMotor.class, "carouselSpinner2");
 //arm
         armMotor=hardwareMap.get(DcMotorEx.class, "armMotor");
+        armMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         armMotor.setTargetPosition(0);
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -84,17 +87,33 @@ public class autoRedFar extends LinearOpMode {
 
         box.setPosition(carryingBoxPosition);
 
-        Trajectory t1=drive.trajectoryBuilder(new Pose2d(0, 0,0))
-                .splineToLinearHeading(splineToShippingHubClose, 0.0)
+        Trajectory t1=drive.trajectoryBuilder(startPoseRedFar)
+                .lineToLinearHeading(lineToShippingHubRedFar)
                 .build();
 
-        //Trajectory t2=drive.trajectoryBuilder(t1.end())
-                //.splineToSplineHeading(splineCarouselClose, -35.0)
-                //.build();
+        Trajectory t2=drive.trajectoryBuilder(t1.end())
+                .lineToSplineHeading(startPoseRedFar)
+                .build();
 
-        //Trajectory t3=drive.trajectoryBuilder(t2.end())
-                //.back(backDepo)
-                //.build();
+        Trajectory t3=drive.trajectoryBuilder(t2.end())
+                .lineToConstantHeading(depoLineRedFar)
+                .build();
+
+        Trajectory t4=drive.trajectoryBuilder(t3.end())
+                .lineToConstantHeading(startVectorRedFar)
+                .build();
+
+        Trajectory t5=drive.trajectoryBuilder(t4.end())
+                .lineToSplineHeading(lineToShippingHubRedFar)
+                .build();
+
+        Trajectory t6=drive.trajectoryBuilder(t5.end())
+                .lineToSplineHeading(startPoseRedFar)
+                .build();
+
+        Trajectory t7=drive.trajectoryBuilder(t6.end())
+                .lineToConstantHeading(depoLineRedFar)
+                .build();
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -130,25 +149,47 @@ public class autoRedFar extends LinearOpMode {
 
         waitForStart();
         if ((opModeIsActive() && !isStopRequested())) {
-            drive.followTrajectory(t1);
             switch(teamMarkerState) {
-                case LEFT: armMotor.setTargetPosition(armHeight1Position);
-                case CENTER: armMotor.setTargetPosition(armHeight2Position);
-                case RIGHT: armMotor.setTargetPosition(armHeight3Position);
-                case UNDETERMINED: armMotor.setTargetPosition(armHeight3Position);
+                case LEFT: position=(armHeight1Position);
+                case CENTER: position=(armHeight2Position);
+                case RIGHT: position=(armHeight3Position);
+                case UNDETERMINED: position=(armHeight3Position);
             }
+            armMotor.setTargetPosition(position);
+            armMotor.setPower(1);
             armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            while(drive.isBusy()) ;
+            drive.followTrajectory(t1);
+            while(drive.isBusy() || armMotor.isBusy()) sleep(50);
             box.setPosition(droppingBoxPosition);
-            //drive.followTrajectory(t2);
-            spinCarousel();
-            //drive.followTrajectory(t3);
+            armMotor.setTargetPosition(0);
+            armMotor.setPower(-1);
+            armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            drive.followTrajectory(t2);
+            intake.setPower(0.5);
+            drive.followTrajectory(t3);
+            sleep(750);
+            intake.setPower(0);
+            drive.followTrajectory(t4);
+            armMotor.setTargetPosition(position);
+            armMotor.setPower(1);
+            armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            drive.followTrajectory(t5);
+            while(drive.isBusy() || armMotor.isBusy()) ;
+            box.setPosition(droppingBoxPosition);
+            armMotor.setTargetPosition(0);
+            armMotor.setPower(-1);
+            armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            drive.followTrajectory(t6);
+            intake.setPower(0.5);
+            drive.followTrajectory(t7);
+            sleep(750);
+            intake.setPower(0);
         }
     }
 
     public void spinCarousel() {
         carouselSpinner1.setPower(0.70);
-        carouselSpinner2.setPower(-0.70);
+        carouselSpinner2.setPower(0.70);
     }
 
     public void initGyro(){

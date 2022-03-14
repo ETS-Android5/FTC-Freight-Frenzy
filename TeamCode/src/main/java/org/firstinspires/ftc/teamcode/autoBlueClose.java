@@ -1,21 +1,52 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.util.Constants;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvWebcam;
 
-@Autonomous(name="myAuto", group="chad")
-public class autoRedClose extends LinearOpMode {
+import static org.firstinspires.ftc.teamcode.util.Constants.armHeight1Position;
+import static org.firstinspires.ftc.teamcode.util.Constants.armHeight2Position;
+import static org.firstinspires.ftc.teamcode.util.Constants.armHeight3Position;
+import static org.firstinspires.ftc.teamcode.util.Constants.carryingBoxPosition;
+import static org.firstinspires.ftc.teamcode.util.Constants.droppingBoxPosition;
+
+@Autonomous(name="SiddhAuto", group="auto")
+public class autoBlueClose extends LinearOpMode {
     //
+    private FtcDashboard dashboard = FtcDashboard.getInstance();
+    OpenCvWebcam webcam;
+
+    private SampleMecanumDrive drive ;
+    DcMotorEx leftFront;
+    DcMotorEx rightFront;
+    DcMotorEx leftRear;
+    DcMotorEx rightRear;
+    DcMotor carouselSpinner1, carouselSpinner2, intake;
+    DcMotorEx armMotor;
+    Servo box;
+    int position=0;
+
+
     DcMotor frontleft;
     DcMotor frontright;
     DcMotor backleft;
@@ -23,51 +54,114 @@ public class autoRedClose extends LinearOpMode {
     //28 * 20 / (2ppi * 4.125)
     Double width = 13.0; //inches
     Integer cpr = 28; //counts per rotation
-    Integer gearratio = 40;
-    Double diameter = 4.125;
+    Integer gearratio = 20;
+    Double diameter = 3.77;
     Double cpi = (cpr * gearratio)/(Math.PI * diameter); //counts per inch, 28cpr * gear ratio / (2 * pi * diameter (in inches, in the center))
-    Double bias = 0.8;//default 0.8
+    Double bias = 1.0;//default 0.8
     Double meccyBias = 0.9;//change to adjust only strafing movement
     //
     Double conversion = cpi * bias;
     Boolean exit = false;
+    Constants.VISUALIZATION_DETERMINED teamMarkerState= Constants.VISUALIZATION_DETERMINED.UNDETERMINED;
     //
     BNO055IMU imu;
     Orientation angles;
     Acceleration gravity;
     //
     public void runOpMode(){
-        //
+        //intake
+        intake=hardwareMap.get(DcMotor.class, "intake");
+//carouselSpinners
+        carouselSpinner1 =hardwareMap.get(DcMotor.class, "carouselSpinner1");
+        carouselSpinner2 =hardwareMap.get(DcMotor.class, "carouselSpinner2");
+//arm
+        armMotor=hardwareMap.get(DcMotorEx.class, "armMotor");
+        armMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        armMotor.setTargetPosition(0);
+        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armMotor.setTargetPositionTolerance(20);
+//box Servo
+        box=hardwareMap.get(Servo.class, "box");
+
         initGyro();
+
+        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
+
+        box.setPosition(carryingBoxPosition);
         //
-        frontleft = hardwareMap.dcMotor.get("frontleft");
-        frontright = hardwareMap.dcMotor.get("frontright");
-        backleft = hardwareMap.dcMotor.get("backleft");
-        backright = hardwareMap.dcMotor.get("backright");
+        frontleft = hardwareMap.dcMotor.get("leftFront");
+        frontright = hardwareMap.dcMotor.get("rightFront");
+        backleft = hardwareMap.dcMotor.get("leftRear");
+        backright = hardwareMap.dcMotor.get("rightRear");
 
         frontright.setDirection(DcMotorSimple.Direction.REVERSE);
         backright.setDirection(DcMotorSimple.Direction.REVERSE);
         //
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        TeamElementPipeline element = new TeamElementPipeline(telemetry, true);
+        webcam.setPipeline(element);
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                webcam.startStreaming(640, 360, OpenCvCameraRotation.UPRIGHT);
+            }
+            @Override
+            public void onError(int errorCode)
+            {
+                telemetry.addData("COMEON", "NOPE");
+                telemetry.update();
+            }
+        });
+
+        while (!isStarted()){
+            teamMarkerState = element.getAnalysis();
+            if (teamMarkerState== Constants.VISUALIZATION_DETERMINED.LEFT){
+                telemetry.addData("Element pos: ", "left");
+            }else if (teamMarkerState== Constants.VISUALIZATION_DETERMINED.CENTER){
+                telemetry.addData("Element pos: ", "center");
+            }else{
+                telemetry.addData("Element pos: ", "right");
+            }
+            telemetry.update();
+            sleep(50);
+        }
         waitForStartify();
         //
-        moveToPosition(-22.4, 0.3);
+        switch(teamMarkerState) {
+            case LEFT: position=(armHeight1Position);
+            case CENTER: position=(armHeight2Position);
+            case RIGHT: position=(armHeight3Position);
+            case UNDETERMINED: position=(armHeight3Position);
+        }
+        moveToPosition(13, 0.2);
+        carouselSpinner1.setPower(-0.7);
+        carouselSpinner1.setPower(-0.7);
+        sleep(2500);
         //
-        turnWithGyro(90, -0.3);
+        box.setPosition(carryingBoxPosition);
+        armMotor.setTargetPosition(position);
+        armMotor.setPower(1);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        strafeToPosition(-40.0, 0.2);
+
+        moveToPosition(-15, 0.2);
+        box.setPosition(droppingBoxPosition);
+        armMotor.setTargetPosition(0);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armMotor.setPower(-1);
         //
-        moveToPosition(19.6, 0.3);
+        strafeToPosition(40.0, 0.2);
         //
-        moveToPosition(-20, 0.3);
-        //
-        turnWithGyro(90, 0.3);
-        //
-        moveToPosition(60.2, 0.3);
+        moveToPosition(-70, 0.2);
         //
     }
     //
-    /*
-    This function's purpose is simply to drive forward or backward.
-    To drive backward, simply make the inches input negative.
-     */
+
     public void moveToPosition(double inches, double speed){
         //
         int move = (int)(Math.round(inches*conversion));
@@ -103,13 +197,10 @@ public class autoRedClose extends LinearOpMode {
         return;
     }
     //
-    /*
-    This function uses the Expansion Hub IMU Integrated Gyro to turn a precise number of degrees (+/- 5).
-    Degrees should always be positive, make speedDirection negative to turn left.
-     */
+
     public void turnWithGyro(double degrees, double speedDirection){
         //<editor-fold desc="Initialize">
-        angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
         double yaw = -angles.firstAngle;//make this negative
         telemetry.addData("Speed Direction", speedDirection);
         telemetry.addData("Yaw", yaw);
@@ -120,10 +211,8 @@ public class autoRedClose extends LinearOpMode {
         //
         double first;
         double second;
-        //</editor-fold>
-        //
-        if (speedDirection > 0){//set target positions
-            //<editor-fold desc="turn right">
+
+        if (speedDirection > 0){
             if (degrees > 10){
                 first = (degrees - 10) + devertify(yaw);
                 second = degrees + devertify(yaw);
@@ -131,9 +220,7 @@ public class autoRedClose extends LinearOpMode {
                 first = devertify(yaw);
                 second = degrees + devertify(yaw);
             }
-            //</editor-fold>
         }else{
-            //<editor-fold desc="turn left">
             if (degrees > 10){
                 first = devertify(-(degrees - 10) + devertify(yaw));
                 second = devertify(-degrees + devertify(yaw));
@@ -142,10 +229,8 @@ public class autoRedClose extends LinearOpMode {
                 second = devertify(-degrees + devertify(yaw));
             }
             //
-            //</editor-fold>
         }
         //
-        //<editor-fold desc="Go to position">
         Double firsta = convertify(first - 5);//175
         Double firstb = convertify(first + 5);//-175
         //
@@ -153,7 +238,7 @@ public class autoRedClose extends LinearOpMode {
         //
         if (Math.abs(firsta - firstb) < 11) {
             while (!(firsta < yaw && yaw < firstb) && opModeIsActive()) {//within range?
-                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
                 gravity = imu.getGravity();
                 yaw = -angles.firstAngle;
                 telemetry.addData("Position", yaw);
@@ -164,7 +249,7 @@ public class autoRedClose extends LinearOpMode {
         }else{
             //
             while (!((firsta < yaw && yaw < 180) || (-180 < yaw && yaw < firstb)) && opModeIsActive()) {//within range?
-                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
                 gravity = imu.getGravity();
                 yaw = -angles.firstAngle;
                 telemetry.addData("Position", yaw);
@@ -181,7 +266,7 @@ public class autoRedClose extends LinearOpMode {
         //
         if (Math.abs(seconda - secondb) < 11) {
             while (!(seconda < yaw && yaw < secondb) && opModeIsActive()) {//within range?
-                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
                 gravity = imu.getGravity();
                 yaw = -angles.firstAngle;
                 telemetry.addData("Position", yaw);
@@ -190,7 +275,7 @@ public class autoRedClose extends LinearOpMode {
                 telemetry.update();
             }
             while (!((seconda < yaw && yaw < 180) || (-180 < yaw && yaw < secondb)) && opModeIsActive()) {//within range?
-                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
                 gravity = imu.getGravity();
                 yaw = -angles.firstAngle;
                 telemetry.addData("Position", yaw);
@@ -203,7 +288,6 @@ public class autoRedClose extends LinearOpMode {
             backleft.setPower(0);
             backright.setPower(0);
         }
-        //</editor-fold>
         //
         frontleft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontright.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -215,10 +299,7 @@ public class autoRedClose extends LinearOpMode {
         backright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     //
-    /*
-    This function uses the encoders to strafe left or right.
-    Negative input for inches results in left strafing.
-     */
+
     public void strafeToPosition(double inches, double speed){
         //
         int move = (int)(Math.round(inches * cpi * meccyBias));
@@ -246,18 +327,12 @@ public class autoRedClose extends LinearOpMode {
         return;
     }
     //
-    /*
-    A tradition within the Thunder Pengwins code, we always start programs with waitForStartify,
-    our way of adding personality to our programs.
-     */
+
     public void waitForStartify(){
         waitForStart();
     }
     //
-    /*
-    These functions are used in the turnWithGyro function to ensure inputs
-    are interpreted properly.
-     */
+
     public double devertify(double degrees){
         if (degrees < 0){
             degrees = degrees + 360;
@@ -275,15 +350,11 @@ public class autoRedClose extends LinearOpMode {
         return degrees;
     }
     //
-    /*
-    This function is called at the beginning of the program to activate
-    the IMU Integrated Gyro.
-     */
+
     public void initGyro(){
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        //parameters.calibrationDataFile = "GyroCal.json"; // see the calibration sample opmode
         parameters.loggingEnabled      = true;
         parameters.loggingTag          = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
@@ -292,10 +363,7 @@ public class autoRedClose extends LinearOpMode {
         imu.initialize(parameters);
     }
     //
-    /*
-    This function is used in the turnWithGyro function to set the
-    encoder mode and turn.
-     */
+
     public void turnWithEncoder(double input){
         frontleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

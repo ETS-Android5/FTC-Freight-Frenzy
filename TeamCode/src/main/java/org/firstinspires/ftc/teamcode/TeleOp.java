@@ -54,6 +54,7 @@ public class TeleOp extends LinearOpMode {
 //arm
         armMotor=hardwareMap.get(DcMotorEx.class, "armMotor");
         armMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        armMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         armMotor.setTargetPosition(0);
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -92,7 +93,7 @@ public class TeleOp extends LinearOpMode {
                 armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 armMotor.setPower(-gamepad2.right_stick_y);
             }
-            else if(gamepad2.b) {
+            else if(gamepad2.y) {
                 armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 targetPosition=armHeight3Position;
                 armMotor.setTargetPosition(targetPosition);
@@ -113,7 +114,7 @@ public class TeleOp extends LinearOpMode {
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(targetPosition >armMotor.getCurrentPosition()?1:-1);
             }
-            else if(gamepad2.y) {
+            else if(gamepad2.b) {
                 armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 targetPosition =0;
                 armMotor.setTargetPosition(targetPosition);
@@ -124,32 +125,23 @@ public class TeleOp extends LinearOpMode {
 
             //carousel spinner
             if(gamepad2.left_trigger>0) {
-                carouselSpinner1.setPower(0.70);
-                carouselSpinner2.setPower(0.70);
+                carouselSpinner1.setPower(0.60);
+                carouselSpinner2.setPower(0.60);
             }
             else if(gamepad2.right_trigger>0) {
-                carouselSpinner1.setPower(-0.70);
-                carouselSpinner2.setPower(-0.70);
+                carouselSpinner1.setPower(-0.60);
+                carouselSpinner2.setPower(-0.60);
             }
             else {
                 carouselSpinner1.setPower(0.00);
                 carouselSpinner2.setPower(0.00);
             }
             //intake
-            intake.setPower(-gamepad2.left_stick_y/3);
+            intake.setPower(-gamepad2.left_stick_y/2);
             //box servo
-            if(gamepad2.dpad_down) box.setPosition(collectionBoxPosition);
+            if(gamepad2.dpad_down)box.setPosition(collectionBoxPosition);
             if(gamepad2.dpad_right) box.setPosition(carryingBoxPosition);
             if(gamepad2.dpad_up) box.setPosition(droppingBoxPosition);
-
-            if(gamepad2.right_trigger==0) {
-                if(armMotor.getCurrentPosition()<20) {
-                    box.setPosition(collectionBoxPosition);
-                }
-                else if(armMotor.getCurrentPosition()<armHeight3Position-20) {
-                    box.setPosition(carryingBoxPosition);
-                }
-            }
 
             if(gamepad2.right_bumper) capServo.setPosition(capUp);
             if(gamepad2.left_bumper) capServo.setPosition(capDown);

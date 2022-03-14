@@ -13,8 +13,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-@Autonomous(name="myAuto", group="chad")
-public class autoRedClose extends LinearOpMode {
+@Autonomous(name="BlueFarNoCarousel", group="auto")
+public class SiddhEncoderTestAuto1 extends LinearOpMode {
     //
     DcMotor frontleft;
     DcMotor frontright;
@@ -23,10 +23,10 @@ public class autoRedClose extends LinearOpMode {
     //28 * 20 / (2ppi * 4.125)
     Double width = 13.0; //inches
     Integer cpr = 28; //counts per rotation
-    Integer gearratio = 40;
-    Double diameter = 4.125;
+    Integer gearratio = 20;
+    Double diameter = 3.77;
     Double cpi = (cpr * gearratio)/(Math.PI * diameter); //counts per inch, 28cpr * gear ratio / (2 * pi * diameter (in inches, in the center))
-    Double bias = 0.8;//default 0.8
+    Double bias = 1.0;//default 0.8
     Double meccyBias = 0.9;//change to adjust only strafing movement
     //
     Double conversion = cpi * bias;
@@ -40,34 +40,22 @@ public class autoRedClose extends LinearOpMode {
         //
         initGyro();
         //
-        frontleft = hardwareMap.dcMotor.get("frontleft");
-        frontright = hardwareMap.dcMotor.get("frontright");
-        backleft = hardwareMap.dcMotor.get("backleft");
-        backright = hardwareMap.dcMotor.get("backright");
+        frontleft = hardwareMap.dcMotor.get("leftFront");
+        frontright = hardwareMap.dcMotor.get("rightFront");
+        backleft = hardwareMap.dcMotor.get("leftRear");
+        backright = hardwareMap.dcMotor.get("rightRear");
 
         frontright.setDirection(DcMotorSimple.Direction.REVERSE);
         backright.setDirection(DcMotorSimple.Direction.REVERSE);
         //
         waitForStartify();
         //
-        moveToPosition(-22.4, 0.3);
-        //
-        turnWithGyro(90, -0.3);
-        //
-        moveToPosition(19.6, 0.3);
-        //
-        moveToPosition(-20, 0.3);
-        //
-        turnWithGyro(90, 0.3);
-        //
-        moveToPosition(60.2, 0.3);
+        moveToPosition(31.4, 0.2);
+
         //
     }
     //
-    /*
-    This function's purpose is simply to drive forward or backward.
-    To drive backward, simply make the inches input negative.
-     */
+
     public void moveToPosition(double inches, double speed){
         //
         int move = (int)(Math.round(inches*conversion));
@@ -103,13 +91,10 @@ public class autoRedClose extends LinearOpMode {
         return;
     }
     //
-    /*
-    This function uses the Expansion Hub IMU Integrated Gyro to turn a precise number of degrees (+/- 5).
-    Degrees should always be positive, make speedDirection negative to turn left.
-     */
+
     public void turnWithGyro(double degrees, double speedDirection){
         //<editor-fold desc="Initialize">
-        angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
         double yaw = -angles.firstAngle;//make this negative
         telemetry.addData("Speed Direction", speedDirection);
         telemetry.addData("Yaw", yaw);
@@ -120,10 +105,8 @@ public class autoRedClose extends LinearOpMode {
         //
         double first;
         double second;
-        //</editor-fold>
-        //
-        if (speedDirection > 0){//set target positions
-            //<editor-fold desc="turn right">
+
+        if (speedDirection > 0){
             if (degrees > 10){
                 first = (degrees - 10) + devertify(yaw);
                 second = degrees + devertify(yaw);
@@ -131,9 +114,7 @@ public class autoRedClose extends LinearOpMode {
                 first = devertify(yaw);
                 second = degrees + devertify(yaw);
             }
-            //</editor-fold>
         }else{
-            //<editor-fold desc="turn left">
             if (degrees > 10){
                 first = devertify(-(degrees - 10) + devertify(yaw));
                 second = devertify(-degrees + devertify(yaw));
@@ -142,10 +123,8 @@ public class autoRedClose extends LinearOpMode {
                 second = devertify(-degrees + devertify(yaw));
             }
             //
-            //</editor-fold>
         }
         //
-        //<editor-fold desc="Go to position">
         Double firsta = convertify(first - 5);//175
         Double firstb = convertify(first + 5);//-175
         //
@@ -153,7 +132,7 @@ public class autoRedClose extends LinearOpMode {
         //
         if (Math.abs(firsta - firstb) < 11) {
             while (!(firsta < yaw && yaw < firstb) && opModeIsActive()) {//within range?
-                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
                 gravity = imu.getGravity();
                 yaw = -angles.firstAngle;
                 telemetry.addData("Position", yaw);
@@ -164,7 +143,7 @@ public class autoRedClose extends LinearOpMode {
         }else{
             //
             while (!((firsta < yaw && yaw < 180) || (-180 < yaw && yaw < firstb)) && opModeIsActive()) {//within range?
-                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
                 gravity = imu.getGravity();
                 yaw = -angles.firstAngle;
                 telemetry.addData("Position", yaw);
@@ -181,7 +160,7 @@ public class autoRedClose extends LinearOpMode {
         //
         if (Math.abs(seconda - secondb) < 11) {
             while (!(seconda < yaw && yaw < secondb) && opModeIsActive()) {//within range?
-                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
                 gravity = imu.getGravity();
                 yaw = -angles.firstAngle;
                 telemetry.addData("Position", yaw);
@@ -190,7 +169,7 @@ public class autoRedClose extends LinearOpMode {
                 telemetry.update();
             }
             while (!((seconda < yaw && yaw < 180) || (-180 < yaw && yaw < secondb)) && opModeIsActive()) {//within range?
-                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
                 gravity = imu.getGravity();
                 yaw = -angles.firstAngle;
                 telemetry.addData("Position", yaw);
@@ -203,7 +182,6 @@ public class autoRedClose extends LinearOpMode {
             backleft.setPower(0);
             backright.setPower(0);
         }
-        //</editor-fold>
         //
         frontleft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontright.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -215,10 +193,7 @@ public class autoRedClose extends LinearOpMode {
         backright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     //
-    /*
-    This function uses the encoders to strafe left or right.
-    Negative input for inches results in left strafing.
-     */
+
     public void strafeToPosition(double inches, double speed){
         //
         int move = (int)(Math.round(inches * cpi * meccyBias));
@@ -246,18 +221,12 @@ public class autoRedClose extends LinearOpMode {
         return;
     }
     //
-    /*
-    A tradition within the Thunder Pengwins code, we always start programs with waitForStartify,
-    our way of adding personality to our programs.
-     */
+
     public void waitForStartify(){
         waitForStart();
     }
     //
-    /*
-    These functions are used in the turnWithGyro function to ensure inputs
-    are interpreted properly.
-     */
+
     public double devertify(double degrees){
         if (degrees < 0){
             degrees = degrees + 360;
@@ -275,15 +244,11 @@ public class autoRedClose extends LinearOpMode {
         return degrees;
     }
     //
-    /*
-    This function is called at the beginning of the program to activate
-    the IMU Integrated Gyro.
-     */
+
     public void initGyro(){
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        //parameters.calibrationDataFile = "GyroCal.json"; // see the calibration sample opmode
         parameters.loggingEnabled      = true;
         parameters.loggingTag          = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
@@ -292,10 +257,7 @@ public class autoRedClose extends LinearOpMode {
         imu.initialize(parameters);
     }
     //
-    /*
-    This function is used in the turnWithGyro function to set the
-    encoder mode and turn.
-     */
+
     public void turnWithEncoder(double input){
         frontleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
